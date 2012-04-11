@@ -2,13 +2,11 @@
 /**
  * Using this plugin for routing is much different and much simpler than core Elgg.
  * 
- * To declare routes:
- *  * Add a routes.php file to your plugin's root, and
- *  * From that file, return a map of routes to handlers like so:
+ * To declare routes, add a routes.php file to your plugin's root that returns a map of routes to handlers like so:
  * 
- *        return array(
- *            '/blog' => 'blog/index',
- *        );
+ *     return array(
+ *         '/blog' => 'blog/index',
+ *     );
  * 
  * It's important that all your routes begin with a slash (`/`) character. This is just to make it obvious which side
  * is the handler and which side is the url matcher.
@@ -17,6 +15,18 @@
  * for a handler file in pages/$handler.php, so in this case it would be pages/blog/index.php. This file is expected to
  * return an array that will seed the $vars of the view that is called. The view is page/$handler, so in this case
  * the view would be page/blog/index.
+ * 
+ * In addition to exact matches, you can define routes that pass named parameters as input to the handlers.
+ * 
+ *     return array(
+ *         '/blog/:guid' => 'blog/view',
+ *     )
+ * 
+ * This will pass the input "guid" to the "blog/view" handler. You can use arbitrary names after the colon to define
+ * inputs (e.g., :my_cool_input), but the framework recognizes some as special:
+ * 
+ *  * `guid` and anything that ends in `_guid` will only match integers.
+ *  * More to come...
  */
 
 /**
@@ -77,7 +87,9 @@ class EvanRoute {
 			return false;
 		}
 
-		$routeRegEx = preg_replace('/:[a-z_]+/', '([^/]+)', $route);
+		$routeRegEx = $route;
+		$routeRegEx = preg_replace('/:([a-z_]+_)?guid/', '([0-9]+)', $routeRegEx);
+		$routeRegEx = preg_replace('/:[a-z_]+/', '([^/]+)', $routeRegEx);
 						
 		$pathArgValues = array();
 		$count = preg_match("#^$routeRegEx$#", $path, $pathArgValues);
