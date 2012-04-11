@@ -15,8 +15,8 @@
  * 
  * On the left side we have the route to look for -- this is compared against the url. If a match is found, we look
  * for a handler file in pages/$handler.php, so in this case it would be pages/blog/index.php. This file is expected to
- * return an array that will seed the $vars of the view that is called. The view is evan/pages/$handler, so in this case
- * the view would be evan/pages/blog/index.
+ * return an array that will seed the $vars of the view that is called. The view is page/$handler, so in this case
+ * the view would be page/blog/index.
  */
 
 /**
@@ -49,10 +49,7 @@ class EvanRoute {
 				foreach (array_reverse(evan_get_plugins()) as $plugin) {
 					$file = elgg_get_plugins_path() . "$plugin/pages/$handler.php";
 					if (file_exists($file)) {
-						$vars = require_once $file;
-						$vars['title'] = elgg_echo("evan/pages/$handler/title");
-						$vars['description'] = elgg_echo("evan/pages/$handler/description");
-						echo elgg_view("evan/pages/$handler", $vars);
+						echo elgg_view("page/$handler", require_once $file);
 						return false; // Prevent further routing
 					}
 				}

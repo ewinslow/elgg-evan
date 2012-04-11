@@ -5,9 +5,7 @@ class EvanMenu {
 	
 	public function __construct(array $items = array()) {
 		foreach ($items as $item) {
-			if ($item instanceof ElggMenuItem) {
-				$items[$item->getName()] = $item;
-			}
+			$this->items[$item->getName()] = $item;
 		}
 	}
 	
