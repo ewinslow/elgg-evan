@@ -2,7 +2,7 @@
 /**
  * 
  */
- 
+
 /**
  *
  */
@@ -15,7 +15,6 @@ $EVAN = new stdClass;
  */
 $EVAN->plugins = array();
 
-
 // Register all active plugins for convention-based plugin hooks + events
 foreach (elgg_get_plugins('active') as $plugin) {
 	$EVAN->plugins[] = $plugin->getID();
@@ -26,6 +25,7 @@ function evan_get_plugins() {
 	return $EVAN->plugins;
 }
 
+EvanRoute::registerAll();
 
 /**
  * This function allows you to handle various visualizations of entities very easily.
@@ -66,7 +66,7 @@ function evan_view_entity($view, ElggEntity $entity, array $vars = array(), $vie
 
 /**
  * This function makes it possible to register for hooks using directory structure conventions rather than explicit
- * registration. In order to register for the `"register", "menu:site"` hook, put a file at
+ * function registration. In order to register for the `"register", "menu:site"` hook, put a file at
  * `my_plugin/hooks/register/menu/site.php`.
  * 
  * @warning You MUST include an explicit return value in order to avoid clobbering the results. `return $return` will
@@ -113,37 +113,11 @@ function evan_event_handler($event, $type, $object) {
 }
 
 function evan_routes_hook_handler($hook, $handler, $return, $params) {
-	$routes = array();
-
-	foreach (evan_get_plugins() as $plugin) {
-		$file = elgg_get_plugins_path() . "$plugin/routes.php";
-		if (file_exists($file)) {
-			$result = include $file;
-			if (is_array($result)) {
-				$routes += $result;
-			}
-		}
+	$segments = array($handler);
+	if (is_array($params['segments'])) {
+		$segments += $params['segments'];
 	}
-	
-	$path = "/$handler/" . implode($params['segments'], '/');
-	
-	foreach ($routes as $route => $handler) {
-		if (evan_route_matches($route, $path)) {
-			foreach (array_reverse(evan_get_plugins()) as $plugin) {
-				$file = elgg_get_plugins_path() . "$plugin/pages/$handler.php";
-				if (file_exists($file)) {
-					$result = require_once $file;
-					echo elgg_view("page/$handler", $result);
-					return true;
-				}
-			}
-				
-		}
-	}
-}
-
-function evan_route_matches($route, $path) {
-	return $route === $path;
+	return EvanRoute::route('/' . implode($segments, '/'));
 }
 
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');
