@@ -31,7 +31,6 @@ class EvanRoute {
 		foreach (evan_get_plugins() as $plugin) {
 			$file = elgg_get_plugins_path() . "$plugin/routes.php";
 			if (file_exists($file)) {
-				system_message("Registering routes for $plugin plugin");
 				self::register(require_once $file);
 			}
 		}
@@ -42,8 +41,6 @@ class EvanRoute {
 	}
 	
 	public static function route($path) {
-		system_message("Routing... $path");
-		system_message(count(self::$routes) . " routes to check");
 		foreach (self::$routes as $route => $handler) {
 			if (self::matches($route, $path)) {
 				foreach (array_reverse(evan_get_plugins()) as $plugin) {
@@ -59,7 +56,6 @@ class EvanRoute {
 	}
 	
 	private static function matches($route, $path) {
-		system_message("Does `$route` match `$path`?");
 		return $route === $path;
 	}
 }
