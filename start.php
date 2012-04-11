@@ -112,10 +112,10 @@ function evan_event_handler($event, $type, $object) {
 	}
 }
 
-function evan_routes_hook_handler($hook, $handler, $return, $params) {
+function evan_routes_hook_handler($hook, $handler, $params) {
 	$segments = array($handler);
 	if (is_array($params['segments'])) {
-		$segments += $params['segments'];
+		$segments = array_merge($segments, $params['segments']);
 	}
 	return EvanRoute::route('/' . implode($segments, '/'));
 }

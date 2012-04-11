@@ -37,12 +37,17 @@ class EvanRoute {
 	}
 	
 	public static function register(array $routeMap) {
-		self::$routes += $routeMap;
+		self::$routes = array_merge(self::$routes, $routeMap);
 	}
 	
 	public static function route($path) {
 		foreach (self::$routes as $route => $handler) {
-			if (self::matches($route, $path)) {
+			$inputs = self::match($route, $path);
+			if (is_array($inputs)) {
+				foreach ($inputs as $key => $value) {
+					set_input($key, $value);
+				}
+
 				foreach (array_reverse(evan_get_plugins()) as $plugin) {
 					$file = elgg_get_plugins_path() . "$plugin/pages/$handler.php";
 					if (file_exists($file)) {
@@ -55,7 +60,46 @@ class EvanRoute {
 		}
 	}
 	
-	private static function matches($route, $path) {
-		return $route === $path;
+	/**
+	 * 
+	 * @param string $route e.g. '/blog/:guid'
+	 * @param string $path  e.g. '/blog/123'
+	 * @return boolean Returns true if the route matched the path.
+	 */
+	private static function match($route, $path) {
+		// Exact match
+		if ($route === $path) {
+			return true;
+		} 
+		
+		// No regex, so can't be a match
+		if (strpos($route, ':') === false) {
+			return false;
+		}
+
+		$routeRegEx = preg_replace('/:[a-z_]+/', '([^/]+)', $route);
+						
+		$pathArgValues = array();
+		$count = preg_match("#^$routeRegEx$#", $path, $pathArgValues);
+		
+		if ($count) {
+			// Convert to regex for matching against $path
+			// E.g., /blog/:guid => /blog/([0-9]+)
+			$routeArgNames = array();
+			preg_match_all("/:([a-z_]+)/", $route, $routeArgNames);
+			// Get the list of plain names without leading colon
+			$routeArgNames = $routeArgNames[1];
+			
+			// First item is the whole path, which we don't need
+			array_shift($pathArgValues);
+
+			$result = array();
+			foreach ($routeArgNames as $key => $name) {
+				$result[$name] = $pathArgValues[$key];
+			}
+			return $result;
+		}
+		
+		return false;
 	}
 }
