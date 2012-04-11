@@ -1,11 +1,14 @@
 <?php 
 /**
- * Using this plugin for routing is much different and much simpler than core Elgg. To declare routes, add a routes.php
- * file to your plugin's root, and return an array of routes to handlers like so:
+ * Using this plugin for routing is much different and much simpler than core Elgg.
  * 
- *     return array(
- *         '/blog' => 'blog/index',
- *     );
+ * To declare routes:
+ *  * Add a routes.php file to your plugin's root, and
+ *  * From that file, return a map of routes to handlers like so:
+ * 
+ *        return array(
+ *            '/blog' => 'blog/index',
+ *        );
  * 
  * It's important that all your routes begin with a slash (`/`) character. This is just to make it obvious which side
  * is the handler and which side is the url matcher.
