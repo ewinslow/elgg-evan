@@ -1,34 +1,4 @@
-<?php 
-/**
- * Using this plugin for routing is much different and much simpler than core Elgg.
- * 
- * To declare routes, add a routes.php file to your plugin's root that returns a map of routes to handlers like so:
- * 
- *     return array(
- *         '/blog' => 'blog/index',
- *     );
- * 
- * It's important that all your routes begin with a slash (`/`) character. This is just to make it obvious which side
- * is the handler and which side is the url matcher.
- * 
- * On the left side we have the route to look for -- this is compared against the url. If a match is found, we look
- * for a handler file in pages/$handler.php, so in this case it would be pages/blog/index.php. This file is expected to
- * return an array that will seed the $vars of the view that is called. The view is page/$handler, so in this case
- * the view would be page/blog/index.
- * 
- * In addition to exact matches, you can define routes that pass named parameters as input to the handlers.
- * 
- *     return array(
- *         '/blog/:guid' => 'blog/view',
- *     )
- * 
- * This will pass the input "guid" to the "blog/view" handler. You can use arbitrary names after the colon to define
- * inputs (e.g., :my_cool_input), but the framework recognizes some as special:
- * 
- *  * `guid` and anything that ends in `_guid` will only match integers.
- *  * More to come...
- */
-
+<?php
 /**
  * Class to encapsulate all the routing-related functions.
  * @author Evan
@@ -46,7 +16,7 @@ class EvanRoute {
 		}
 	}
 	
-	public static function register(array $routeMap) {
+	private static function register(array $routeMap) {
 		self::$routes = array_merge(self::$routes, $routeMap);
 	}
 	
@@ -58,10 +28,11 @@ class EvanRoute {
 					set_input($key, $value);
 				}
 
+				// Find the page handler in the plugin with the highest priority
 				foreach (array_reverse(evan_get_plugins()) as $plugin) {
 					$file = elgg_get_plugins_path() . "$plugin/pages/$handler.php";
 					if (file_exists($file)) {
-						echo elgg_view("page/$handler", require_once $file);
+						require_once $file;
 						return false; // Prevent further routing
 					}
 				}
@@ -71,15 +42,14 @@ class EvanRoute {
 	}
 	
 	/**
-	 * 
 	 * @param string $route e.g. '/blog/:guid'
 	 * @param string $path  e.g. '/blog/123'
-	 * @return boolean Returns true if the route matched the path.
+	 * @return array Returns an array of inputs if the route matched the path. False otherwise.
 	 */
 	private static function match($route, $path) {
 		// Exact match
 		if ($route === $path) {
-			return true;
+			return array(); // exact match so no named inputs
 		} 
 		
 		// No regex, so can't be a match
