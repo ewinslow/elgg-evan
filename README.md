@@ -29,12 +29,68 @@ to your plugin's manifest.xml:
 
 ### Viewing entities with `evan_view_entity()`
 
-See the comments in start.php
+This function allows you to handle various visualizations of entities very easily.
+
+For example, `evan_view_entity('link', $blog)` will look for views in the following order: 
+
+ 1. object/blog/link
+ 2. object/default/link
+ 3. entity/link
+
+This allows you to avoid filling your views with so many if/else statements like this:
+https://github.com/Elgg/Elgg/blob/f122c12ab35f26d5b77a18cc263fc199eb2a7b01/mod/blog/views/default/object/blog.php
 
 ### Convention-based hook + event registration
 
-See the comments in start.php.
+This plugin makes it possible to register for hooks using directory structure conventions rather than explicit
+function registration. In order to register for the `"register", "menu:site"` hook, put a file at
+`my_plugin/hooks/register/menu/site.php`.
+
+A similar feature is also available for events. In order to register for the `"init", "system"` event, for example,
+put the behavior of the event at `my_plugin/events/init/system.php`. Return `false` from the file in order to cancel
+further events, just like normal event handler functions.
+
+#### Limitations
+It is not possible to register for all types of a certain hook with this method. I.e., a file at
+`my_plugin/hooks/register/all.php` will not be run on all 'register' hooks.
+
+There is no way to unregister hooks when using this method. Best you can do is add a hook that undoes the
+the effect of the hook you want to "unregister" and make sure the plugin that defines this hook is loaded later.
+
+#### Warning!!!
+You MUST include an explicit return value in hook handlers in order to avoid clobbering the results. If you don't want
+to change the return value, `return $return` will work, as will `return NULL`. If you fail to do this, the return value
+will be forced to `true`, which is often not what you want.
 
 ### Simplified routing system
 
-See the comments in classes/EvanRoute.php
+Using this plugin for routing is much different and much simpler than core Elgg.
+
+#### Basic configuration
+To declare routes, add a routes.php file to your plugin's root that returns a map of routes to handlers like so:
+
+    return array(
+        '/blog' => 'blog/index',
+    );
+
+It's important that all your routes begin with a slash (`/`) character, otherwise they will not be matched. This also
+makes it obvious which side is the url and which side is the handler.
+
+On the left side we have the route to look for -- this is compared against the url. If a match is found, we look
+for a handler file in pages/$handler.php, so in this case it would be pages/blog/index.php. These page handlers
+are expected to behave like standard Elgg 1.8 handlers. Plugins are checked for page handlers from last loaded to
+first loaded, so page handlers can now essentially be overridden just like views -- super handy.
+
+#### Named inputs
+In addition to exact matches, you can define routes that pass named parameters as input to the handlers.
+
+    return array(
+        '/blog/:guid' => 'blog/view',
+    )
+
+This will pass the input "guid" to the "blog/view" handler. You can use arbitrary names after the colon to define
+inputs (e.g., :my_cool_input), but the framework recognizes some as special:
+
+ * `guid` and anything that ends in `_guid` will only match integers.
+ * More to come... any suggestions?
+
