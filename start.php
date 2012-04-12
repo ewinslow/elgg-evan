@@ -65,19 +65,7 @@ function evan_view_entity($view, ElggEntity $entity, array $vars = array(), $vie
 
 
 /**
- * This function makes it possible to register for hooks using directory structure conventions rather than explicit
- * function registration. In order to register for the `"register", "menu:site"` hook, put a file at
- * `my_plugin/hooks/register/menu/site.php`.
- * 
- * @warning You MUST include an explicit return value in order to avoid clobbering the results. `return $return` will
- * work, as will `return NULL` if you don't want to change the return value. If you fail to do this, the return value
- * will be forced to `true`, which is often not what you want.
- *
- * @note It is not possible to register for all types of a certain hook with this method. I.e., a file at
- * `my_plugin/hooks/register/all.php` will not be run on all 'register' hooks.
- *
- * @note There is no way to unregister hooks when using this method. Best you can do is add a hook that undoes the
- * the effect of the hook you want to "unregister" and make sure the plugin that defines this hook is loaded later.
+ * This function makes it possible to register for hooks using directory structure conventions.
  */
 function evan_plugin_hook_handler($hook, $type, $return, $params) {
 	foreach (evan_get_plugins() as $plugin) {
@@ -95,10 +83,7 @@ function evan_plugin_hook_handler($hook, $type, $return, $params) {
 
 
 /**
- * This function makes it possible to register for events using directory structure conventions rather than explicit
- * registration. In order to register for the `"init", "system"` event, for example, put the behavior of the event at
- * `my_plugin/events/init/system.php`. Return `false` from the file in order to cancel further events (just like normal
- * event handler functions).
+ * This function makes it possible to register for events using directory structure conventions.
  */
 function evan_event_handler($event, $type, $object) {
 	foreach (evan_get_plugins() as $plugin) {
