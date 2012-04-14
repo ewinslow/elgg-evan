@@ -25,7 +25,6 @@ define(function(require) {
 				var segments = event.target.pathname.split('/');
 				segments.shift();
 				segments.shift();
-				alert('hallo');
 				$('.elgg-main').html(content).prepend(
 					'<div class="elgg-head"><h2>' + 
 					i18n('admin:' + segments[0]) + ' : ' + i18n('admin:' + segments.join(':')) + 
