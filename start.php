@@ -33,6 +33,8 @@ elgg_extend_view('page/elements/foot', 'requirejs/config');
 if (elgg_is_admin_logged_in()) {
 	elgg_register_ajax_view('admin/statistics/server');
 	elgg_register_ajax_view('admin/statistics/overview');
+	elgg_register_ajax_view('admin/settings/basic');
+	elgg_register_ajax_view('admin/settings/advanced');
 }
 
 /**
