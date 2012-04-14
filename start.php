@@ -26,6 +26,14 @@ function evan_get_plugins() {
 }
 
 EvanRoute::registerAll();
+elgg_register_js('require', '/mod/evan/vendors/requirejs-1.0.7/require.min.js', 'footer');
+elgg_load_js('require');
+elgg_extend_view('page/elements/foot', 'requirejs/config', 1);
+
+if (elgg_is_admin_logged_in()) {
+	elgg_register_ajax_view('admin/statistics/server');
+	elgg_register_ajax_view('admin/statistics/overview');
+}
 
 /**
  * This function allows you to handle various visualizations of entities very easily.
