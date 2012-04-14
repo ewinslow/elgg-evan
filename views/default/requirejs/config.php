@@ -19,6 +19,6 @@ require.config({
 	},
 });
 
-require(['elgg/evan/admin']);
+require(['elgg/evan/admin'], function() {});
 
 </script>
