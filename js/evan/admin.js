@@ -1,4 +1,7 @@
-define(function() {
+define(function(require) {
+	var $ = require('jquery');
+	var elgg = require('elgg');
+	
 	function isClickAjaxable(event) {
 		return event.target.href && !event.metaKey && !event.ctrlKey &&
 		       location.host == event.target.host &&

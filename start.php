@@ -28,7 +28,7 @@ function evan_get_plugins() {
 EvanRoute::registerAll();
 elgg_register_js('require', '/mod/evan/vendors/requirejs-1.0.7/require.min.js', 'footer');
 elgg_load_js('require');
-elgg_extend_view('page/elements/foot', 'requirejs/config', 1);
+elgg_extend_view('page/elements/foot', 'requirejs/config');
 
 if (elgg_is_admin_logged_in()) {
 	elgg_register_ajax_view('admin/statistics/server');
