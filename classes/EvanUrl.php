@@ -18,7 +18,7 @@ class EvanUrl {
 	/** @var string */
 	public $path;
 
-	/** @var ElggQueryString */
+	/** @var EvanUrlQuery */
 	private $query;
 
 	/** @var string */
@@ -42,7 +42,7 @@ class EvanUrl {
 	 * @param string $url
 	 */
 	public function __contruct($url) {
-		$pieces = parse_url(ElggUrl::normalize($url));
+		$pieces = parse_url(EvanUrl::normalize($url));
 
 		$this->scheme = $pieces['scheme'];
 		$this->host = $pieces['host'];
@@ -50,9 +50,7 @@ class EvanUrl {
 		$this->user = $pieces['user'];
 		$this->pass = $pieces['pass'];
 		$this->path = $pieces['path'];
-
-		// TODO(evan): Use HttpQueryString?
-		$this->query = new ElggQueryString($pieces['query']);
+		$this->query = new EvanUrlQuery($pieces['query']);
 		$this->fragment = $pieces['fragment'];
 	}
 
@@ -70,23 +68,18 @@ class EvanUrl {
 
 		$scheme = isset($this->scheme) ? "$this->scheme:" : '';
 		$port = isset($this->port) ? ":$this->port" : '';
-		$path = isset($this->path) ? "/$this->path" : '';
 		$query = isset($this->query) ? "?$this->query": '';
 		$fragment = isset($this->fragment) ? "#$this->fragment": '';
 
-		return "{$scheme}//{$auth}{$this->host}{$port}{$path}{$query}{$fragment}";
+		return "{$scheme}//{$auth}{$this->host}{$port}/{$this->path}{$query}{$fragment}";
 	}
 
 	public function addActionTokens() {
-		$this->query->set(array(
-			'__elgg_ts' => $timestamp = time(),
-			'__elgg_token' => generate_action_token($timestamp),
-		));
+		$this->query->set('__elgg_ts', $timestamp = time());
+		$this->query->set('__elgg_token', generate_action_token($timestamp));
 	}
 
 	public function setFormat($format) {
-		$this->query->set(array(
-			'viewtype' => $format,
-		));
+		$this->query->set('viewtype', $format);
 	}
 }
