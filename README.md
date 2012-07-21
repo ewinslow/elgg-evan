@@ -94,3 +94,27 @@ inputs (e.g., :my_cool_input), but the framework recognizes some as special:
  * `guid` and anything that ends in `_guid` will only match integers.
  * More to come... any suggestions?
 
+### CSS-based icon insertion
+
+Instead of:
+
+    echo elgg_view('output/url', array('text' => elgg_view_icon('home') . htmlspecialchars($text)));
+
+Which produces output like this:
+
+    <a href="..."><span class="elgg-icon elgg-icon-home"></span>Text</a>
+
+You can do:
+
+    echo elgg_view('output/url', array('text' => $text, 'encode_text' => true, 'data-icon' => 'home'));
+
+Which produces output like this:
+
+    <a href="..." data-icon="home">Text</a>
+
+And has the same visual effect.
+
+
+
+
+
