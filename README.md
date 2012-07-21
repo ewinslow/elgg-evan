@@ -112,9 +112,26 @@ Which produces output like this:
 
     <a href="..." data-icon="home">Text</a>
 
-And has the same visual effect.
+And has the same visual effect. The hope is that this will make menu configuration
+more plugin-friendly -- for example, if you just want to change the icon, not the
+text of the menu item, your plugin doesn't have to conflict with another plugin that
+wants to change the text but not the icon.
+
+See http://trac.elgg.org/ticket/3547 for the official progress.
 
 
+### `EvanMenu`: Easier menu-configuration in plugin hooks
 
+In Elgg right now, tweaking the menu items registered for a menu is tough work.
+All you get in the plugin hook is an array of items without any API for manipulating
+the contents. `EvanMenu` solves this problem.
 
+You can use `EvanMenu` like so within your plugin hooks.
+
+    $menu = new EvanMenu($items);
+    
+    $menu->registerItem(...); // similar API to elgg_register_menu_item
+    $menu->unregisterItem($name); // Remove items by name.
+    
+    return $menu->getItems();
 
