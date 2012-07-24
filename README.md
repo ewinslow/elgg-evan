@@ -135,3 +135,8 @@ You can use `EvanMenu` like so within your plugin hooks.
     
     return $menu->getItems();
 
+### Gutters for grids
+
+Elgg 1.8 introduced a grids system, but there was no gutter support. This plugin takes advantage
+of the fact that the css is generated with PHP and emits a grid system based on the gutter width
+you choose. See css/elements/grid.php -- just edit the $gutterWidthPercent value to change gutters.
