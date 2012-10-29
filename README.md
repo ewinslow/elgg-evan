@@ -1,7 +1,7 @@
 # Evan's Elgg Development Framework
 
 This plugin gives me the freedom to experiment with some features that I
-think would be potentially useful in Elgg core.
+think would be useful in Elgg core.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ to your plugin's manifest.xml:
 	<requires>
 		<type>plugin</type>
 		<name>evan</name>
-		<version>1.0</version>
+		<version>1.1</version>
 	</requires>
 	<requires>
 		<type>priority</type>
@@ -67,7 +67,8 @@ will be forced to `true`, which is often not what you want.
 Using this plugin for routing is much different and much simpler than core Elgg.
 
 #### Basic configuration
-To declare routes, add a routes.php file to your plugin's root that returns a map of routes to handlers like so:
+To declare routes, add a routes.php file to your plugin's root that returns a
+map of routes to handlers like so:
 
     return array(
         '/blog' => 'blog/index',
@@ -82,7 +83,8 @@ are expected to behave like standard Elgg 1.8 handlers. Plugins are checked for 
 first loaded, so page handlers can now essentially be overridden just like views -- super handy.
 
 #### Named inputs
-In addition to exact matches, you can define routes that pass named parameters as input to the handlers.
+In addition to exact matches, you can define routes that pass named parameters
+as input to the handlers.
 
     return array(
         '/blog/:guid' => 'blog/view',
@@ -98,7 +100,9 @@ inputs (e.g., :my_cool_input), but the framework recognizes some as special:
 
 Instead of:
 
-    echo elgg_view('output/url', array('text' => elgg_view_icon('home') . htmlspecialchars($text)));
+    echo elgg_view('output/url', array(
+        'text' => elgg_view_icon('home') . htmlspecialchars($text),
+    ));
 
 Which produces output like this:
 
@@ -106,7 +110,11 @@ Which produces output like this:
 
 You can do:
 
-    echo elgg_view('output/url', array('text' => $text, 'encode_text' => true, 'data-icon' => 'home'));
+    echo elgg_view('output/url', array(
+        'text' => $text, 
+        'encode_text' => true, 
+        'data-icon' => 'home',
+    ));
 
 Which produces output like this:
 
@@ -117,7 +125,7 @@ more plugin-friendly -- for example, if you just want to change the icon, not th
 text of the menu item, your plugin doesn't have to conflict with another plugin that
 wants to change the text but not the icon.
 
-See http://trac.elgg.org/ticket/3547 for the official progress.
+See <http://trac.elgg.org/ticket/3547> for the official progress.
 
 
 ### `EvanMenu`: Easier menu-configuration in plugin hooks
@@ -140,3 +148,96 @@ You can use `EvanMenu` like so within your plugin hooks.
 Elgg 1.8 introduced a grids system, but there was no gutter support. This plugin takes advantage
 of the fact that the css is generated with PHP and emits a grid system based on the gutter width
 you choose. See css/elements/grid.php -- just edit the $gutterWidthPercent value to change gutters.
+
+### `evan_user_can($verb, $object, $target)`
+
+This is an experimental implementation of <http://trac.elgg.org/ticket/4888>.
+
+Elgg comes with various permissions-related functions such as `can_edit` and
+`can_write_to_container`. In addition, there are several permissions hooks for
+controlling what users can and cannot do. This function unifies the interface to
+Elgg's permissions system and also broadens the scope of what Elgg's permission
+system can handle. For example, there has never been a standard way to ask Elgg,
+"Can the current user invite user X to event Y?" Now, that question is easy to
+ask:
+
+    elgg_user_can('invite', $user, $event);
+
+An additional benefit of requesting permissions this way is that it is not
+dependent on data-model. If, for example, we were tracking event invites with
+annotations and we decided to switch to using relationships at some point, the
+permissions code wouldn't have to change at all. That makes everything a lot
+more maintainable than before.
+
+#### Example Usage
+
+Here are a few examples along with the old way of checking permissions to
+highlight the improved readability and maintainability of the new system.
+
+Checking if the current user can post a blog to their own wall:
+
+    elgg_user_can('post', new ElggBlog(), $user);
+
+Checking if the current user can invite another user to an event:
+
+    elgg_user_can('invite', $user, $event);
+
+Checking if the current user can join a group:
+
+    elgg_user_can('join', $group);
+
+Checking if the current user can follow another user:
+
+    elgg_user_can('follow', $user);
+
+Checking if the current user can delete something:
+
+    elgg_user_can('delete', $entity);
+
+Checking if the current user can tag another user in a photo:
+
+    elgg_user_can('tag', $user, $photo);
+
+#### Customizing permissions via hooks
+
+To control the results, simply register for the plugin hook "permission,verb"
+like so:
+
+    elgg_register_plugin_hook_handler('permission', 'post', 'handler');
+
+Or if you prefer the file-system-based method that the evan-framework provides:
+
+    /mod/myplugin/hooks/permission/post.php
+
+Your handler will be passed four values: actor, verb, object, and target.
+Plugin developers are encouraged to use the [activitystreams verbs][as-verbs]
+whenever one is available that fits their needs.
+
+ [as-verbs]: http://activitystrea.ms/head/activity-schema.html#verbs
+
+#### Backwards compatibility
+
+Of course, in order for this to be useful, it needs to be backwards compatible
+with the permissions models from before. I've hardcoded the translations from
+the new code to the old code where appropriate. If you find anything missing,
+submit a bug/pull request and we'll get that fixed.
+
+#### Limitations
+
+This function does not accept non-entities as the object or target of the
+permissions check. For example, as of 1.8, you cannot ask using this function
+whether the user has permission to comment on a blog, since comments are modeled
+as annotations. The appropriate way to do that would have been:
+
+    elgg_user_can('post', new ElggComment(), $blog);
+
+But the object must be an ElggEntity. It may be tempting to instead do:
+
+    elgg_user_can('comment', $blog);
+    
+But that is discouraged since this is not consistent with the activitystreams
+spec and it is best to align with that spec as much as possible. I hope that
+this new permissions interface will help clarify for people what should be an 
+ElggEntity and what should be an ElggAnnotation so that we don't have this
+situation again in the future.
+

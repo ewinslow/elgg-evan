@@ -105,6 +105,31 @@ function evan_routes_hook_handler($hook, $handler, $params) {
 	return EvanRoute::route('/' . implode($segments, '/'));
 }
 
+function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
+	switch ($verb) {
+		case 'post':
+			if (!$target) {
+				$target = elgg_get_logged_in_user_entity();
+			}
+			
+			$result = $target->canWriteToContainer(0, $object->getType(), $object->getSubtype());
+			break;
+		case 'update':
+			$result = $object->canEdit();
+			break;
+		default:
+			$result = false;
+			break;
+	}
+
+	return elgg_trigger_plugin_hook("permission", $verb, array(
+		'actor' => elgg_get_logged_in_user_entity(),
+		'verb' => $verb,
+		'object' => $object,
+		'target' => $target,
+	), $result);
+}
+
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');
 elgg_register_event_handler('all', 'all', 'evan_event_handler');
 elgg_register_plugin_hook_handler('route', 'all', 'evan_routes_hook_handler');
