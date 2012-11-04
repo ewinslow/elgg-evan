@@ -10,4 +10,6 @@ add_translation('en', array(
 	'composer:prompt' => 'Share:',
 	
 	'spam' => 'Spam',
+	
+	'tinymce:toggle' => 'Toggle editor',
 ));
