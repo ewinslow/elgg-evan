@@ -241,3 +241,34 @@ this new permissions interface will help clarify for people what should be an
 ElggEntity and what should be an ElggAnnotation so that we don't have this
 situation again in the future.
 
+### EvanDatabase
+
+This factory class provides some useful tools for querying entities. For example,
+to fetch 10 banned users:
+
+    $db = new EvanDatabase();
+    $db->getUsers()->where('banned', true)->getItems(10, 0); // The array of users
+
+To count the number of banned users:
+
+    $db = new EvanDatabase();
+    $db->getUsers()->where('banned', true)->getCount(); // The number of banned users
+
+The power comes from having a dedicated EvanUsersQuery object that understands
+user-specific fields. For example, we can now easily query for admins:
+
+    $db = new EvanDatabase();
+    $db->getUsers()->where('admin', true)->getItem(0); // A single admin user
+
+It also makes some very handy admin-relevant queries easy:
+
+    $db = new EvanDatabase();
+    $db->getUsers()->where('validated', false)->getItems(); // 10 unvalidated users
+
+#### Limitations
+
+As of right now, only `getEntities()` and `getUsers()` are supported. `getObjects()`
+and `getGroups()` seem like logical next steps.
+
+It's not yet possible to query on metadata with this API. You can still use 
+`elgg_get_entities_from_metadata()` for that.
