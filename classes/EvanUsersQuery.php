@@ -1,6 +1,8 @@
 <?php
 
 class EvanUsersQuery extends EvanEntitiesQuery {
+	private $search = '';
+
 	/**
 	 * Do not return banned users by default
 	 */
@@ -15,6 +17,11 @@ class EvanUsersQuery extends EvanEntitiesQuery {
 		parent::__construct($db);
 		
 		$this->addJoin("users_entity u on e.guid = u.guid");
+	}
+	
+	public function search($q) {
+		$this->search = $q;
+		return $this;
 	}
 	
 	public function where($property, $value) {
@@ -49,6 +56,16 @@ class EvanUsersQuery extends EvanEntitiesQuery {
 			$options['wheres'][] = "u.admin = 'yes'";
 		} elseif ($this->admin === false) {
 			$options['wheres'][] = "u.admin = 'no'";
+		}
+		
+		if ($this->search) {
+			$q = sanitize_string($this->search);
+			
+			$where = "u.name LIKE \"%{$q}%\" OR u.username LIKE \"%{$q}%\"";
+			if (elgg_is_admin_logged_in()) {
+				$where .= " u.email LIKE \"%{$q}%\"";
+			}
+			$options['wheres'][] = "($where)";
 		}
 		
 		/*
