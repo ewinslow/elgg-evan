@@ -15,7 +15,7 @@ class Evan_Db_Mysql implements Evan_Db {
             // Experimental API
 		    return new EvanEntitiesQuery($this);
         } else {
-            return elgg_get_entities($options);
+            return elgg_get_entities_from_metadata($options);
         }
 	}
 }
