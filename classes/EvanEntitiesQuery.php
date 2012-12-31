@@ -1,6 +1,6 @@
 <?php
 
-class EvanEntitiesQuery {
+class EvanEntitiesQuery implements Evan_Db_Collection {
 	
 	private $db = NULL;
 
@@ -39,7 +39,7 @@ class EvanEntitiesQuery {
 	
 	private $joins = array();
 	
-	public function __construct(EvanDatabase $db) {
+	public function __construct(Evan_Db_Mysql $db) {
 		$this->db = $db;
 	}
 	
@@ -125,11 +125,15 @@ class EvanEntitiesQuery {
 	}
 	
 	public function getCount() {
-		return $this->getEntities_(array(
+        return $this->getTotalItems();
+    }
+	
+    public function getTotalItems() {
+    	return $this->getEntities_(array(
 			'count' => TRUE,
 		));
-	}
-	
+    }
+    
 	private function getEntities_(array $options = array()) {
 		$options = array_merge($this->getOptions(), $options);
 		

@@ -4,7 +4,7 @@
  * This is an in-memory DB that implements the Evan_Db interface.
  * Useful for testing.
  */
-class Evan_Db_Local {
+class Evan_Db_Local implements Evan_Db {
     private $nextGuid = 1;
     
     // The current user for purposes of access control.
@@ -17,7 +17,7 @@ class Evan_Db_Local {
     // The relationships table.
     private $relationships = array();
     
-    public function getEntities() {
+    public function getEntities(array $options = array()) {
         return new EvanUsersQuery($this);
     }
     

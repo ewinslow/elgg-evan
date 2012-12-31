@@ -10,6 +10,10 @@ interface Evan_Db {
     // entities.exists (ignores access control)
     // entities.update
     // entities.delete
+
+    // This should be the equivalent of elgg_get_entities_from_metadata
+    public function getEntities(array $options = array());
+    
     
     // users
     

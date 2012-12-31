@@ -92,8 +92,4 @@ class EvanUsersQuery extends EvanEntitiesQuery {
 		
 		return $options;
 	}
-	
-	public function getItems($limit, $offset) {
-		return parent::getItems($limit, $offset);
-	}
 }
