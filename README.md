@@ -16,7 +16,7 @@ to your plugin's manifest.xml:
 	<requires>
 		<type>plugin</type>
 		<name>evan</name>
-		<version>1.1</version>
+		<version>1.6</version>
 	</requires>
 	<requires>
 		<type>priority</type>
