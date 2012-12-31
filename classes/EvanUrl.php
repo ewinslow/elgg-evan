@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Provides an OO interface for interacting with URLs.
+ */
 class EvanUrl {
 	/** @var string */
 	public $scheme;
@@ -26,33 +29,30 @@ class EvanUrl {
 	public $fragment;
 
 	/**
-	 * Takes a string in URL form and parses it into its pieces.
-	 * @param string $url
+	 * @param string $url The string representation of the URL to be parsed into
+     *     its component parts by `parse_url`.
 	 */
-	public function __contruct($url) {
-		$pieces = parse_url($url);
+	public function __construct($url) {
+        $defaults = array(
+            'scheme' => NULL,
+            'user' => NULL,
+            'pass' => NULL,
+            'host' => NULL,    
+            'port' => NULL,
+            'path' => NULL,
+            'query' => NULL,
+            'fragment' => NULL,
+        );
+		$pieces = array_merge($defaults, parse_url($url));
 
 		$this->scheme = $pieces['scheme'];
+    	$this->user = $pieces['user'];
+		$this->pass = $pieces['pass'];
 		$this->host = $pieces['host'];
 		$this->port = $pieces['port'];
-		$this->user = $pieces['user'];
-		$this->pass = $pieces['pass'];
 		$this->path = $pieces['path'];
-		$this->query = new EvanUrlQuery($pieces['query']);
+		$this->query = new EvanQueryParams($pieces['query']);
 		$this->fragment = $pieces['fragment'];
-	}
-
-	public function __toString() {
-		return http_build_url(array(
-			'scheme' => $this->scheme,
-			'host' => $this->host,
-			'port' => $this->port,
-			'user' => $this->user,
-			'pass' => $this->pass,
-			'path' => $this->path,
-			'query' => "$this->query",
-			'fragment' => $this->fragment,
-		));
 	}
 
 	/**
@@ -73,11 +73,47 @@ class EvanUrl {
 	}
 
 	public function getParam($name) {
-		return $this->query->{$name};
+		return $this->query->get($name);
 	}
 
 	public function setParam($name, $value) {
 		$this->query->set($name, $value);
 		return $this;
+	}
+
+    public function __toString() {
+        // elgg.org/the/path
+        $url = "{$this->host}{$this->path}";
+        
+        // elgg.org/the/path?some=params
+        if ($this->query) {
+            $url = "$url?$this->query";
+        }
+        
+        // elgg.org/the/path?some=params#fragment
+        if ($this->fragment) {
+            $url = "$url#$this->fragment";
+        }
+        
+        // user@elgg.org/the/path?some=params#fragment
+        if ($this->user) {
+            $user = $this->user;
+            
+            // user:pass@elgg.org/the/path?some=params#fragment
+            if ($this->pass) {
+                $user = "$user:$this->pass";
+            }
+            
+            $url = "$user@$url";
+        }
+        
+        $url = "//$url";
+        
+        // http://elgg.org/the/path?some=params#fragment
+        if ($this->scheme) {
+            $url = "$this->scheme:$url";
+        }
+
+        return $url;
 	}
 }

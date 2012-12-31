@@ -1,7 +1,7 @@
 <?php
 
 class EvanMenuTest extends PHPUnit_Framework_TestCase {
-        public function testGetItemsReturnsOriginalItems() {
+    public function testGetItemsReturnsOriginalItems() {
 		$items = array(
 			new ElggMenuItem('name1', 'text1', 'url1'),
 			new ElggMenuItem('name2', 'text2', 'url2'),
@@ -32,6 +32,6 @@ class EvanMenuTest extends PHPUnit_Framework_TestCase {
 		$item1_unregistered = $menu->unregisterItem('name1');
 		$this->assertEquals($item1, $item1_unregistered);
 
-		$this->assertEquals(0, count($this->getItems()));
+		$this->assertEquals(0, count($menu->getItems()));
 	}
 }    
