@@ -1,15 +1,17 @@
 <?php
 
 /**
- * An object representing the system clock.
+ * An object representing a clock. Typically the system clock.
  */
-class Evan_Clock {
+interface Evan_Clock {
     
     /**
-     * @return DateTime The current system time.
+     * @return DateTime A new object representing the current time.
      */
-    public function getTime() {
-        return new DateTime();
-    }
+    public function getDateTime();
     
+    /**
+     * @return int The current time as a Unix timestamp.
+     */
+    public function getTimestamp();
 }
