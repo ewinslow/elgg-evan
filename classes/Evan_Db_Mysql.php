@@ -5,6 +5,10 @@ class Evan_Db_Mysql implements Evan_Db {
 		global $CONFIG;
 		return $CONFIG->dbprefix;
 	}
+    
+    public function addMetastring($metastring) {
+        return add_metastring($metastring);
+    }
 
 	public function getUsers() {
 		return new EvanUsersQuery($this);
