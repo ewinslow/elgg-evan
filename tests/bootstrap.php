@@ -4,8 +4,8 @@ $plugin_root = dirname(__DIR__);
 
 date_default_timezone_set('America/Los_Angeles');
 
-// Initializes $CONFIG;
-require_once "$plugin_root/.Elgg/engine/lib/autoloader.php";
+// Elgg 1.9 compat
+@include_once "$plugin_root/.Elgg/engine/lib/autoloader.php";
 
 // Bare minimum of engine needed to run tests
 require_once "$plugin_root/.Elgg/engine/lib/elgglib.php";

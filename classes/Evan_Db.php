@@ -2,6 +2,17 @@
 
 interface Evan_Db {
     
+    /**
+     * @return ElggUser The currently active user.
+     */
+    public function getUser();
+    
+    /**
+     * Sets the current active user for this database connection. This affects
+     * things like what entities and metadata are returned based on ACLs.
+     */
+    public function setUser(ElggUser $user = NULL);
+    
     // entities.create
     // entities.getByGuid
     // entities.get
@@ -11,7 +22,9 @@ interface Evan_Db {
     // entities.update
     // entities.delete
 
-    // This should be the equivalent of elgg_get_entities_from_metadata
+    /**
+     * This should be the equivalent of elgg_get_entities_from_metadata.
+     */
     public function getEntities(array $options = array());
     
     

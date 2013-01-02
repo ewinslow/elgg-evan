@@ -17,6 +17,17 @@ class Evan_Db_Local implements Evan_Db {
     // The relationships table.
     private $relationships = array();
     
+    /** @override */
+    public function getUser() {
+        return $_SESSION['user'];
+    }
+
+    /** @override */
+    public function setUser(ElggUser $user = NULL) {
+        $_SESSION['user'] = $user;
+        return $this;
+    }
+
     public function getEntities(array $options = array()) {
         return new EvanUsersQuery($this);
     }
