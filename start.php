@@ -130,6 +130,55 @@ function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
 	), $result);
 }
 
+elgg_register_event_handler('init:angular', 'elggDefault', function($event, $type, AngularModuleConfig $elggDefault) {
+        $elggDefault
+                ->registerDirective('elggFocusModel')
+                // ->registerDirective('elggInputHtml') // Broken
+                // ->registerDirective('elggResponses')
+                ->registerDirective('elggComments')
+                // ->registerDirective('elggRiver')
+                // ->registerDirective('elggRiverComment')
+                // ->registerDirective('elggRiverItem')
+                // ->registerDirective('elggUsers')
+                ->registerFilter('elggEcho')
+                ->registerService('elgg')
+                ->registerService('elggUser')
+                ->registerDep('ngSanitize');
+});
+
+elgg_register_event_handler('init:angular', 'elggAdmin', function($event, $type, AngularModuleConfig $elggAdmin) {
+
+        $elggAdmin
+                ->registerDirective('elggUsers')
+                ;
+
+});
+
+function angular_get_module_config($name) {
+        $module = new AngularModuleConfig($name);
+
+        elgg_trigger_event('init:angular', $name, $module);
+
+        return $module;
+}
+
+elgg_register_event_handler('init', 'system', function() {
+        elgg_extend_view('page/default', 'angular/bootstrap/elggDefault');
+        elgg_extend_view('page/admin', 'angular/bootstrap/elggAdmin');
+        elgg_extend_view('css/elgg', 'css/elgg/link.css');
+
+        elgg_register_simplecache_view("js/ng/module/elggDefault.js");
+        elgg_register_simplecache_view("js/ng/module/elggAdmin.js");
+
+        elgg_register_js('angular', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.js", 'footer');
+        elgg_register_js('ng/module/ngResource', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.min.js", 'footer');
+        elgg_register_js('ng/module/ngSanitize', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-sanitize.min.js", 'footer');
+
+        elgg_load_js('angular');
+        elgg_load_js('ng/module/ngResource');
+        elgg_load_js('ng/module/ngSanitize');
+});
+
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');
 elgg_register_event_handler('all', 'all', 'evan_event_handler');
 elgg_register_plugin_hook_handler('route', 'all', 'evan_routes_hook_handler');

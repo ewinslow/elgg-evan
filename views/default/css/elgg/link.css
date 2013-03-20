@@ -1,0 +1,14 @@
+.elgg-link {
+	background: none;
+	border: none;
+	color: #4690D6;
+	cursor: pointer;
+	display: inline;
+	text-decoration: none;
+	
+}
+
+.elgg-link:hover {
+	color: #555555;
+	text-decoration: underline;
+}

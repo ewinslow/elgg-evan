@@ -1,0 +1,20 @@
+<?php
+/**
+ * List comments with optional add form
+ *
+ * @uses $vars['entity']        ElggEntity
+ * @uses $vars['show_add_form'] Display add form or not
+ * @uses $vars['id']            Optional id for the div
+ * @uses $vars['class']         Optional additional class for the div
+ */
+
+$entity = $vars['entity'];
+
+$attributes = array(
+	'id' => $vars['id'],
+	'class' => "elgg-comments {$vars['class']}",
+	'data-entity' => $entity->getGUID(),
+);
+?>
+
+<div data-elgg-comments <?php echo elgg_format_attributes($attributes); ?>></div>
