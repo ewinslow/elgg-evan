@@ -17,8 +17,16 @@ define(function(require) {
 
 	// services
 	<?php
-	foreach ($module->getServices() as $service) {
-		echo "ngModule.factory('$service', require('ng/service/$service/factory'));\n";
+	foreach ($module->getValues() as $service => $value) {
+		echo "ngModule.value('$service', require('$value'));\n";
+	}
+
+	foreach ($module->getServices() as $service => $constructor) {
+		echo "ngModule.service('$service', require('$constructor'));\n";
+	}
+
+	foreach ($module->getFactories() as $service => $factory) {
+		echo "ngModule.factory('$service', require('$factory'));\n";
 	}
 	?>
 

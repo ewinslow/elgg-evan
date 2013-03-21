@@ -9,8 +9,12 @@ class AngularModuleConfig {
 	private $directives = array();
 
 	private $filters = array();
+	
+	private $values = array();
 
 	private $services = array();
+
+	private $factories = array();
 
 	function __construct($name) {
 		$this->name = $name;
@@ -26,11 +30,6 @@ class AngularModuleConfig {
 		return $this;
 	} 
 
-	function unregisterDirective($directive) {
-		unset($this->directives[$directive]);
-		return $this;
-	}
-
 	function getDirectives() {
 		return array_keys($this->directives);
 	}
@@ -42,29 +41,37 @@ class AngularModuleConfig {
 		return $this;
 	}
 
-	function unregisterFilter($filter) {
-		unset($this->filters[$filter]);
-		return $this;
-	}
-
 	function getFilters() {
 		return array_keys($this->filters);
 	}
 
 	
-	
-	function registerService($service) {
-		$this->services[$service] = true;
+
+	function registerValue($service, $value) {
+		$this->values[$service] = $value;
 		return $this;
 	}
 
-	function unregisterService($service) {
-		unset($this->services[$service]);
+	function getValues() {
+		return $this->values;
+	}
+
+	function registerService($service, $constructor) {
+		$this->services[$service] = $constructor;
 		return $this;
 	}
 
 	function getServices() {
-		return array_keys($this->services);
+		return $this->services;
+	}
+
+	function registerFactory($service, $factory) {
+		$this->factories[$service] = $factory;
+		return $this;
+	}
+
+	function getFactories() {
+		return $this->factories;
 	}
 
 	
