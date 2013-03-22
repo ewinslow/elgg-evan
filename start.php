@@ -220,7 +220,7 @@ elgg_register_event_handler('init', 'system', function() {
         elgg_register_simplecache_view("js/ng/module/elggDefault.js");
         elgg_register_simplecache_view("js/ng/module/elggAdmin.js");
 
-        elgg_register_js('angular', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.js", 'footer');
+        elgg_register_js('angular', "//ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js", 'footer');
         elgg_register_js('ng/module/ngResource', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.min.js", 'footer');
         elgg_register_js('ng/module/ngSanitize', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-sanitize.min.js", 'footer');
 
