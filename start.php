@@ -195,11 +195,12 @@ elgg_register_event_handler('init:angular', 'elggAdmin', function($event, $type,
 
         $elggAdmin
 		->registerValue('elgg', 'elgg')
-		->registerValue('moment', 'moment')
 		->registerService('elggDatabase', 'elgg/Database')
-		->registerFilter('fromNow')
-		->registerFilter('calendar')
+                ->registerDirective('elggFocusModel')
+		->registerDirective('elggFriendlyTime')	
 		->registerDirective('elggUsers')
+                ->registerFilter('elggEcho')
+		->registerValue('moment', 'moment')
                 ;
 
 });

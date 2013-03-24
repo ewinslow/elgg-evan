@@ -26,8 +26,8 @@ define(function(require) {
 		return this.getCollection('/activity-json');
 	};
 	
-	Database.prototype.getUsers = function() {
-		return this.getCollection('/users-json');
+	Database.prototype.getUsers = function(data) {
+		return this.getCollection('/users-json', data);
 	};
 	
 	Database.prototype.getPlugin = function(id) {

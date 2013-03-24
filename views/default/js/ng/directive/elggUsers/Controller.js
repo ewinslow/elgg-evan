@@ -1,20 +1,86 @@
 // <script>
 define(function() {
-	return function($scope, elggDatabase) {
+	return function($scope, elggDatabase, elgg) {
 		$scope.listbox = {
 			currentUser: null,
 			
 			/** A map of guids to booleans indicating whether the user is selected */
-			selections: {}
+			selections: {},
+
+			/** A range for shift-click style workflows */
+			rangeSelect: {
+				startIndex: null,
+				endIndex: null
+			}
+		};
+
+		$scope.getSelectedBannedUsers = function() {
+			return this.getSelectedItems().filter(function(user) {
+				return user.banned;
+			});
+		};		
+
+		$scope.banUser = function(user) {
+                        if (user.banned) {
+                                return;
+                        }
+
+                        elgg.action('admin/user/ban', {guid:user.guid}).then(function() {
+                                user.banned = true;
+				$scope.$digest();
+                        });
+                };
+
+		$scope.unbanUser = function(user) {
+                        if (!user.banned) {
+                                return;
+                        }
+
+                        elgg.action('admin/user/unban', {guid:user.guid}).then(function() {
+                                user.banned = false;
+                        	$scope.$digest();
+			});
+                };
+
+		$scope.banSelectedUsers = function() {
+			this.getSelectedItems().forEach(this.banUser.bind(this));
+		};
+
+		$scope.unbanSelectedUsers = function() {
+			this.getSelectedItems().forEach(this.unbanUser.bind(this));
+		};
+
+		$scope.getSelectedUnbannedUsers = function() {
+			return this.getSelectedItems().filter(function(user) {
+				return !user.banned;
+			});
+		};
+
+
+		$scope.getSelectedItems = function() {
+			return this.getItems().filter(this.isSelected.bind(this));
+		};
+
+		$scope.handleAction = function(user) {
+			this.listbox.currentUser = user;
+			this.setSelected(user, !this.isSelected(user));
 		};
 
 		$scope.handleKeyDown = function($event) {
 			var keyCode = $event.keyCode || $event.which;
 			switch (keyCode) {
 				case 40: // down
+					if ($event.shiftKey) {
+						this.setSelected(this.getCurrentUser(), true);
+						this.setSelected(this.getNextUser(), true);
+					}
 					this.focusNext();
 					break;
 				case 38: // up
+					if ($event.shiftKey) {
+						this.setSelected(this.getCurrentUser(), true);
+						this.setSelected(this.getPreviousUser(), true);
+					}
 					this.focusPrevious();
 					break;
 				case 32: // spacebar
@@ -111,7 +177,7 @@ define(function() {
 			return this.listbox.selections[user.guid];
 		};
 
-		elggDatabase.getUsers().then(function(collection) {
+		elggDatabase.getUsers({banned:0}).then(function(collection) {
 			$scope.getItems = collection.getItems.bind(collection);
 			$scope.getTotalItems = collection.getTotalItems.bind(collection);
 			$scope.hasNextItems = collection.hasNextItems.bind(collection);

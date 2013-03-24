@@ -1,9 +1,10 @@
 <?php
 header("Content-type: application/json");
 
+$banned = (boolean)get_input('banned', false);
 $db = new EvanDatabase();
-$users = $db->getUsers()->where('banned', NULL);
-$limit = (int)get_input('limit', 10, false);
+$users = $db->getUsers()->where('banned', $banned);
+$limit = (int)get_input('limit', 100, false);
 $offset = (int)get_input('offset', 0, false);
 
 $nextOffset = $offset + $limit;
