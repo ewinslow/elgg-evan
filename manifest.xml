@@ -6,7 +6,7 @@
 	<description>Provides some development conveniences</description>
 	<website>http://www.ewinslow.com/</website>
 	<copyright>(C) 2012 Evan Winslow</copyright>
-
+	<license>MIT</license>
 	<requires>
 		<type>elgg_release</type>
 		<version>1.8.3</version>

@@ -1,6 +1,8 @@
 <?php
 
 add_translation('en', array(
+	'admin:users:browse' => 'Browse',
+
 	'composer:object:thewire' => "Post",
 	'composer:object:bookmarks' => "Bookmark",
 	'composer:object:blog' => "Blog",

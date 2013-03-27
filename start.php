@@ -3,6 +3,14 @@
  * 
  */
 
+function from_atom($timestamp) {
+        return date_create_from_format(DateTime::ATOM, $timestamp)->getTimestamp();
+}
+
+function to_atom($timestamp) {
+        return date_format(date_timestamp_set(date_create(), $timestamp), DateTime::ATOM);
+}
+
 /**
  *
  */
@@ -26,6 +34,43 @@ function evan_get_plugins() {
 }
 
 EvanRoute::registerAll();
+
+/**
+ * Returns the activitystreams representation of an ElggUser
+ */
+function elgg_get_person_proto(ElggUser $user) {
+        $person = array(
+                'guid' => $user->guid,
+                'objectType' => 'person',
+                'displayName' => $user->name,
+                'summary' => $user->briefdescription,
+                'image' => array(
+                        'url' => $user->getIconURL('medium'),
+                        'width' => 100, // TODO: dynamically determine this from config variables
+                        'height' => 100, // TODO: ...and this too, of course
+                ),
+                'url' => $user->getURL(),
+                'location' => array(
+                        'displayName' => $user->location,
+                ),
+                'username' => $user->username,
+        );
+
+        if (elgg_is_admin_logged_in()) {
+                $person['published'] = to_atom($user->time_created);
+                $person['banned'] = $user->isBanned();
+                $person['ban_reason'] = $user->ban_reason;
+                $person['email'] = $user->email;
+
+                if ($user->last_action) {
+                        $person['last_action'] = to_atom($user->last_action);
+                }
+        }
+
+        return $person;
+}
+
+
 
 /**
  * This function allows you to handle various visualizations of entities very easily.
@@ -129,6 +174,61 @@ function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
 		'target' => $target,
 	), $result);
 }
+
+elgg_register_event_handler('init:angular', 'elggDefault', function($event, $type, AngularModuleConfig $elggDefault) {
+        $elggDefault
+                ->registerDirective('elggFocusModel')
+                // ->registerDirective('elggInputHtml') // Broken
+                // ->registerDirective('elggResponses')
+                ->registerDirective('elggComments')
+                // ->registerDirective('elggRiver')
+                // ->registerDirective('elggRiverComment')
+                // ->registerDirective('elggRiverItem')
+                // ->registerDirective('elggUsers')
+                ->registerFilter('elggEcho')
+                ->registerValue('elgg', 'elgg')
+                ->registerFactory('elggUser')
+                ->registerDep('ngSanitize');
+});
+
+elgg_register_event_handler('init:angular', 'elggAdmin', function($event, $type, AngularModuleConfig $elggAdmin) {
+
+        $elggAdmin
+		->registerValue('elgg', 'elgg')
+		->registerService('elggDatabase', 'elgg/Database')
+                ->registerDirective('elggFocusModel')
+		->registerDirective('elggFriendlyTime')	
+		->registerDirective('elggUsers')
+                ->registerFilter('elggEcho')
+		->registerValue('moment', 'moment')
+                ;
+
+});
+
+function angular_get_module_config($name) {
+        $module = new AngularModuleConfig($name);
+
+        elgg_trigger_event('init:angular', $name, $module);
+
+        return $module;
+}
+
+elgg_register_event_handler('init', 'system', function() {
+        elgg_extend_view('page/default', 'angular/bootstrap/elggDefault');
+        elgg_extend_view('page/admin', 'angular/bootstrap/elggAdmin');
+        elgg_extend_view('css/elgg', 'css/elgg/link.css');
+
+        elgg_register_simplecache_view("js/ng/module/elggDefault.js");
+        elgg_register_simplecache_view("js/ng/module/elggAdmin.js");
+
+        elgg_register_js('angular', "//ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js", 'footer');
+        elgg_register_js('ng/module/ngResource', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.min.js", 'footer');
+        elgg_register_js('ng/module/ngSanitize', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-sanitize.min.js", 'footer');
+
+        elgg_load_js('angular');
+        elgg_load_js('ng/module/ngResource');
+        elgg_load_js('ng/module/ngSanitize');
+});
 
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');
 elgg_register_event_handler('all', 'all', 'evan_event_handler');
