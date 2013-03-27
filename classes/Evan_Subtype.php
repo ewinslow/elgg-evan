@@ -4,6 +4,10 @@
  * of a given subtype possess, as well as the restrictions on those features
  * for the sake of simplifying data validation, which otherwise can get tedious
  * and repetetive.
+ * 
+ * Ideally this could also provide a way to generate default forms and relationship
+ * management views.
+ * 
  */
 class Evan_Subtype {
     private $properties = array();
@@ -255,9 +259,10 @@ class Evan_Subtype {
             $this->images[$name] = array();
         }
         
-        $this->annotations[$name] = array_merge($this->annotations[$name], $options);
+        $this->images[$name] = array_merge($this->images[$name], $options);
         return $this;
     }
+    
     
     /**
      * Delete the configuration for the given image.
