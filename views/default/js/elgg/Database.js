@@ -1,6 +1,4 @@
 define(function(require) {
-	var ActivityStreamsCollection = require('activitystreams/Collection');
-	
 	var Database = function($http, elgg) {
 		this.$http = $http;
 		this.elgg = elgg;
@@ -12,22 +10,16 @@ define(function(require) {
 		});
 	};
 
-	Database.prototype.getCollection = function(url, data) {
-		return this.getObject(url, data).then(function(result) {
-			return new ActivityStreamsCollection(result);
-		});		
-	};
-	
 	Database.prototype.getEntity = function(guid) {
 		return this.getObject('/entity-json', {guid: guid});
 	};
 
 	Database.prototype.getActivity = function() {
-		return this.getCollection('/activity-json');
+		return this.getObject('/activity-json');
 	};
 	
 	Database.prototype.getUsers = function(data) {
-		return this.getCollection('/users-json', data);
+		return this.getObject('/users-json', data);
 	};
 	
 	Database.prototype.getPlugin = function(id) {
@@ -35,7 +27,7 @@ define(function(require) {
 	};
 
 	Database.prototype.getAlbums = function() {
-		return this.getCollection('/albums-json');
+		return this.getObject('/albums-json');
 	};
 	
 	return Database;

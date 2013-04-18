@@ -8,7 +8,7 @@ define(function() {
 				var raw = elm[0];
 				
 				elm.bind('scroll', function() {
-					if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
+					if ((raw.scrollTop + raw.offsetHeight + 3000) >= raw.scrollHeight) {
 					    scope.$apply(attr.whenScrolled);
 					}
 				});

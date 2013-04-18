@@ -1,44 +1,5 @@
-<div>
-	<style scoped>
-		[aria-orientation=horizontal] > * {
-			float: left;
-		}
-		
-		tr.elgg-state-selected td {
-			background: pink;
-		}
-
-		tr:hover td {
-			background: lightgrey;
-		}
-
-		tr.elgg-state-focused td:first-child {
-			background: red;
-		}
-
-
-		.elgg-table-fixed > thead {
-			display: block;
-			padding-right: 16px;
-		}
-
-		.elgg-table-fixed > thead > tr {
-			display: table;
-			width: 100%;
-		}
-
-		.elgg-table-fixed > tbody {
-			display: block;
-			overflow-y: scroll;
-			height: 400px;
-		}
-
-		.elgg-col-checkbox { width: 1%; }
-                .elgg-col-location { max-width: 15%; width: 15%; }
-                .elgg-col-timestamp { max-width: 12%; width: 12%; }
-                .elgg-col-status { max-width: 8%; width: 8%; }
-	</style>
-	<div class="mvm clearfix">
+<div class="elgg-users" id="{{id}}">
+	<div class="elgg-users-controls clearfix">
 		<ul style="float:left" class="elgg-menu elgg-menu-hz" aria-orientation="horizontal">
 			<li>
 				<a href="/admin/users/add" class="elgg-button elgg-button-action">
@@ -58,8 +19,7 @@
 		</ul>
 		<ul style="float:right" aria-orientation="horizontal" class="elgg-menu elgg-menu-hz">
 			<li>
-				1 - <span data-ng-bind="getItems().length">?</span>
-				out of <span data-ng-bind="getTotalItems()">??</span>
+				<span data-ng-bind="getTotalItems()">??</span> results
 			</li>
 		</ul>
 	</div>
@@ -72,18 +32,21 @@
 				       title="Toggle All" />
 			</th>
 			<th class="elgg-col-name">Name</th>
+			<th class="elgg-col-email">Email</th>
 			<th class="elgg-col-timestamp">Registered</th>
 			<th class="elgg-col-timestamp">Activity</th>
 			<th class="elgg-col-status">Status</th>
 		</thead>
-		<tbody data-when-scrolled="hasNextItems() && !isLoadingNextItems() && loadNextItems()"
-		       tabindex="0" role="listbox" aria-activedescendant="option-{{getCurrentUser().guid}}"
+		<tbody data-when-scrolled="handleScroll($event)"
+		       tabindex="0" role="listbox"
+		       aria-activedescendant="{{id}}-option-{{getCurrentUser().guid}}"
 		       data-ng-keydown="handleKeyDown($event)"
 		       data-elgg-focus-model="listbox.focused">
 			<tr data-ng-repeat="user in getItems() | filter:q" role="option"
-			    data-ng-class="getOptionClasses(user)" id="option-{{user.guid}}"
+			    data-ng-class="getOptionClasses(user)"
+			    class="elgg-users-option" id="{{id}}-option-{{user.guid}}"
 			    data-ng-click="handleAction(user)"
-			    aria-labelledby="option-{{user.guid}}-label">
+			    aria-labelledby="{{id}}-option-{{user.guid}}-label">
 				<td class="elgg-col-checkbox">
 					<input type="checkbox" tabindex="-1" data-ng-checked="isSelected(user)" />
 				</td>
@@ -93,16 +56,14 @@
 							<img data-ng-src="{{user.image.url}}" width=25 height=25 alt="" />
 						</a>
 						<div class="elgg-body">
-							<h3 id="option-{{user.guid}}-label">
+							<h3 id="{{id}}-option-{{user.guid}}-label">
 								<a href="{{user.url}}" tabindex="-1">{{user.displayName}}</a>
 								<small>({{user.username}})</small>
 							</h3>
-							<div class="elgg-subtext">
-								{{user.email}}
-							</div>
 						</div>
 					</div>
 				</td>
+				<td class="elgg-col-email">{{user.email}}</td>
 				<td class="elgg-col-timestamp">
 					<time datetime="{{user.published}}" data-elgg-friendly-time />
 				</td>

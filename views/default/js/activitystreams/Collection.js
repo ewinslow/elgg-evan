@@ -1,11 +1,12 @@
 define(function(require) {
-	var elgg = require('elgg');
 	var $ = require('jquery');
 	
-	return function(collection) {
-	
+	function CollectionCtrl(collection, $http) {
+		this.collection = collection;
+		this.$http = $http;
+
 		this.getRemainingItemsCount = function() {
-			return collection.totalItems - collection.items.length;
+			return this.collection.totalItems - this.collection.items.length;
 		};
 
 		this.hasRemainingItems = function() {
@@ -13,15 +14,15 @@ define(function(require) {
 		};
 
 		this.getItems = function() {
-			return collection.items;
+			return this.collection.items;
 		};
 
 		this.getTotalItems = function() {
-			return collection.totalItems;
+			return this.collection.totalItems;
 		};
 	
 	        this.appendItem = function(item) {
-	                collection.items.push(item);
+	                this.collection.items.push(item);
 	        };
 	
         	this.resetLoadingNext = function() {
@@ -29,9 +30,9 @@ define(function(require) {
         	};
 
 		this.appendCollection = function(newCollection) {
-			collection.totalItems = newCollection.totalItems;
+			this.collection.totalItems = newCollection.totalItems;
 			newCollection.items.forEach(this.appendItem, this);
-			collection.links.next = newCollection.items.length ? newCollection.links.next : null;
+			this.collection.links.next = newCollection.items.length ? newCollection.links.next : null;
 		};
 	
 		this.resetLoadingNext = function() {
@@ -49,13 +50,14 @@ define(function(require) {
 				return this.loadingNextItems;	
 			}
 		
-			return this.loadingNextItems = elgg.getJSON(collection.links.next.href).
-				done(this.appendCollection.bind(this)).
-				always(this.resetLoadingNext.bind(this));
+			var resetLoadingNext = this.resetLoadingNext.bind(this);
+			return this.loadingNextItems = $http.get(collection.links.next.href).
+				then(this.appendCollection.bind(this)).
+				then(resetLoadingNext, resetLoadingNext);
 		};
 	
 		this.hasNextItems = function() {
-			return !!(collection.links && collection.links.next);
+			return !!(this.collection.links && this.collection.links.next);
 		};
 	
 		this.isLoadingNextItems = function() {
@@ -63,7 +65,7 @@ define(function(require) {
 		};
 		
 		this.getOldestPublishedTime = function() {
-			return collection.items.map(function(object) { 
+			return this.collection.items.map(function(object) { 
 				return object.published; 
 			}).sort()[0];
 		};
@@ -71,7 +73,7 @@ define(function(require) {
 		this.indexOfEntity = function(entity) {
 			var index = -1;
 			
-			collection.items.forEach(function(item, idx) {
+			this.collection.items.forEach(function(item, idx) {
 				if (item.guid == entity.guid) {
 					index = idx;
 				}
@@ -83,7 +85,7 @@ define(function(require) {
 		this.indexOfAnnotation = function(annotation) {
 			var index = -1;
 			
-			collection.items.forEach(function(item, idx) {
+			this.collection.items.forEach(function(item, idx) {
 				if (item.annotation_id == annotation.annotation_id) {
 					index = idx;
 				}
@@ -92,4 +94,6 @@ define(function(require) {
 			return index;
 		};
 	};
+
+	return CollectionCtrl;
 });

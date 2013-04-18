@@ -70,7 +70,135 @@ function elgg_get_person_proto(ElggUser $user) {
         return $person;
 }
 
+function elgg_get_object_proto(ElggObject $object) {
+	$objectJson = array(
+		'guid' => $object->guid,
+		'published' => to_atom($object->time_created),
+		'updated' => to_atom($object->time_updated),
+		"displayName" => $object->title,
+		"url" => $object->getURL(),
+		"container" => array(
+			'guid' => $object->getContainerEntity()->guid,
+		),
+		"content" => $object->description,
+		'canEdit' => $object->canEdit(),
+		'canDelete' => $object->canEdit(),
+		'hasLiked' => !!elgg_get_annotations(array(
+			'annotation_name' => 'likes',
+			'annotation_owner_guid' => elgg_get_logged_in_user_guid(),
+			'guid' => $object->guid,
+			'count' => true,
+		)),
+		"likes" => elgg_get_likes_proto($object),
+		"comments" => elgg_get_comments_proto($object),
+		'attachments' => array(),
+		'access_id' => $object->access_id,
+	);
 
+	$owner = $object->getOwnerEntity();
+	if ($owner) {
+		$objectJson['author'] = elgg_get_person_proto($owner);
+	}
+
+
+	if ($object->getSubtype() == 'album') {
+		$photosOptions = array(
+                        'container_guid' => $object->guid,
+                        'type' => 'object',
+                        'subtype' => 'image',
+                );
+
+		$photos = elgg_get_entities($photosOptions);
+
+		$objectJson['totalItems'] = $object->getSize();
+
+		$coverImage = get_entity($object->getCoverImageGuid());
+		if ($coverImage) {
+			$objectJson['image'] = array(
+				'url' => $coverImage->getIconUrl('small'),
+			);
+		} else {
+			$objectJson['image'] = array(
+				'url' => elgg_normalize_url("mod/tidypics/graphics/empty_album.png"),
+			);
+		}
+
+		foreach ($photos as $photo) {
+			$objectJson['attachments'][] = elgg_get_attachment_proto($photo);
+		}
+	}
+
+	if ($object->getSubtype() == 'blog') {
+		$objectJson['status'] = $object->status;
+		$objectJson['comments_on'] = $object->comments_on;
+	}
+
+	if ($object->getSubtype() == 'tidypics_batch') {
+		$photos = $object->getEntitiesFromRelationship('belongs_to_batch', true);
+
+		foreach ($photos as $photo) {
+			$objectJson['attachments'][] = elgg_get_attachment_proto($photo);
+		}
+	}
+
+	if ($object->getSubtype() == 'image') {
+		$objectJson['image'] = array(
+			'url' => $object->getIconUrl('small'),
+		);
+
+		$objectJson['fullImage'] = array(
+			'url' => $object->getIconUrl('master'),
+		);
+	}
+
+	return $objectJson;
+}
+
+function elgg_get_likes_proto(ElggEntity $entity) {
+	$likes = $entity->getAnnotations('likes', 3);
+	$likes_count = elgg_get_annotations(array(
+		'annotation_name' => 'likes', 
+		'guid' => $entity->guid, 
+		'count' => true,
+	));
+
+	$likes_json = array(
+		'totalItems' => $likes_count,
+		'items' => array(),
+	);
+
+	foreach ($likes as $like) {
+		$likes_json['items'][] = elgg_get_person_proto($like->getOwnerEntity());
+	}
+
+	return $likes_json;
+}
+
+function elgg_get_comments_proto(ElggEntity $entity) {
+	$comments = $entity->getAnnotations('generic_comment', 3, 0, 'desc');
+	$comments_json = array(
+		'totalItems' => $entity->countComments(),
+		'items' => array(),
+	);
+
+	foreach ($comments as $comment) {
+		$comments_json['items'][] = elgg_get_comment_proto($comment);
+	}
+
+	return $comments_json;
+}
+
+function elgg_get_plugin_proto(ElggPlugin $plugin) {
+	$pluginJson = array(
+		'guid' => $plugin->guid,
+		'version' => $plugin->version,
+		'displayName' => $plugin->title,
+		'elggPluginId' => $plugin->getId(),
+		'isActive' => $plugin->isActive(),
+	);
+
+	return $pluginJson;
+}
 
 /**
  * This function allows you to handle various visualizations of entities very easily.
@@ -175,22 +303,6 @@ function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
 	), $result);
 }
 
-elgg_register_event_handler('init:angular', 'elggDefault', function($event, $type, AngularModuleConfig $elggDefault) {
-        $elggDefault
-                ->registerDirective('elggFocusModel')
-                // ->registerDirective('elggInputHtml') // Broken
-                // ->registerDirective('elggResponses')
-                ->registerDirective('elggComments')
-                // ->registerDirective('elggRiver')
-                // ->registerDirective('elggRiverComment')
-                // ->registerDirective('elggRiverItem')
-                // ->registerDirective('elggUsers')
-                ->registerFilter('elggEcho')
-                ->registerValue('elgg', 'elgg')
-                ->registerFactory('elggUser')
-                ->registerDep('ngSanitize');
-});
-
 elgg_register_event_handler('init:angular', 'elggAdmin', function($event, $type, AngularModuleConfig $elggAdmin) {
 
         $elggAdmin
@@ -199,7 +311,8 @@ elgg_register_event_handler('init:angular', 'elggAdmin', function($event, $type,
                 ->registerDirective('elggFocusModel')
 		->registerDirective('elggFriendlyTime')	
 		->registerDirective('elggUsers')
-                ->registerFilter('elggEcho')
+                ->registerDirective('whenScrolled')
+		->registerFilter('elggEcho')
 		->registerValue('moment', 'moment')
                 ;
 
@@ -214,20 +327,30 @@ function angular_get_module_config($name) {
 }
 
 elgg_register_event_handler('init', 'system', function() {
-        elgg_extend_view('page/default', 'angular/bootstrap/elggDefault');
-        elgg_extend_view('page/admin', 'angular/bootstrap/elggAdmin');
-        elgg_extend_view('css/elgg', 'css/elgg/link.css');
+	elgg_extend_view('page/elements/foot', 'evan/foot');
+
+	elgg_extend_view('css/elgg', 'css/elgg/link.css');
 
         elgg_register_simplecache_view("js/ng/module/elggDefault.js");
         elgg_register_simplecache_view("js/ng/module/elggAdmin.js");
 
-        elgg_register_js('angular', "//ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js", 'footer');
-        elgg_register_js('ng/module/ngResource', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.min.js", 'footer');
-        elgg_register_js('ng/module/ngSanitize', "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-sanitize.min.js", 'footer');
+	elgg_register_js('require', '/vendors/requirejs/require-2.1.4.min.js', 'footer');
+	elgg_register_js('jquery', '/vendors/jquery/jquery-1.7.2.min.js', 'footer');
+	elgg_register_js('jquery-ui', '/vendors/jquery/jquery-ui-1.8.21.min.js', 'footer');
+	elgg_register_js('elgg', elgg_get_simplecache_url('js', 'elgg'), 'footer');
 
-        elgg_load_js('angular');
-        elgg_load_js('ng/module/ngResource');
-        elgg_load_js('ng/module/ngSanitize');
+        elgg_register_js('angular', array(
+		'src' => "//ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js",
+		'exports' => 'angular',
+	));
+        elgg_register_js('ng/module/ngResource', array(
+		'src' => "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.min.js",
+		'deps' => array('angular'),
+	));
+        elgg_register_js('ng/module/ngSanitize', array(
+		'src' => "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-sanitize.min.js",
+		'deps' => array('angular'),
+	));
 });
 
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');

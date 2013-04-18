@@ -1,0 +1,22 @@
+<html>
+<head>
+	<title>Tests for activitystreams/Collection</title>
+</head>
+<body>
+<script src="//searls.github.com/jasmine-all/jasmine-all.js"></script>
+<script>
+var require = {
+	baseUrl: '..',
+	paths: {
+		'jquery': '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min'
+	}
+};
+
+</script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
+<script>
+	define('jasmine', function() { return jasmine; });
+	require(['activitystreams/CollectionTest'], function() { jasmine.getEnv().execute(); });
+</script>
+</body>
+</html>

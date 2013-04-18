@@ -1,6 +1,7 @@
 // <script>
 define(function() {
 	return function($scope, elggDatabase, elgg) {
+		$scope.id = 'elgg-users-' + Math.random();
 		$scope.listbox = {
 			currentUser: null,
 			
@@ -12,6 +13,10 @@ define(function() {
 				startIndex: null,
 				endIndex: null
 			}
+		};
+
+		$scope.handleScroll = function($event) {
+			this.hasNextItems() && !this.isLoadingNextItems() && this.loadNextItems();
 		};
 
 		$scope.getSelectedBannedUsers = function() {
@@ -96,6 +101,10 @@ define(function() {
 
 		$scope.getCurrentUser = function() {
 			return this.listbox.currentUser;
+		};
+
+		$scope.getActiveIndex = function() {
+			return this.getItems().indexOf(this.getCurrentUser());
 		};
 
 		$scope.focusNext = function() {

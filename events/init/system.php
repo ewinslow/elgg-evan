@@ -4,6 +4,11 @@ elgg_extend_view('css/elgg', 'css/data-icon');
 elgg_extend_view('css/elgg', 'css/evan');
 elgg_extend_view('js/elgg', 'js/evan');
 
+elgg_extend_view('css/elgg', 'js/ng/directive/elggUsers/styles.css');
+elgg_extend_view('css/elgg', 'js/ng/directive/elggFriendlyTime/styles.css');
+elgg_extend_view('css/admin', 'js/ng/directive/elggUsers/styles.css');
+elgg_extend_view('css/admin', 'js/ng/directive/elggFriendlyTime/styles.css');
+
 elgg_extend_view('js/elgg', 'js/elgg/composer');
 
 

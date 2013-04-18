@@ -15,6 +15,8 @@ class AngularModuleConfig {
 	private $services = array();
 
 	private $factories = array();
+	
+	private $routes = array();
 
 	function __construct($name) {
 		$this->name = $name;
@@ -65,13 +67,22 @@ class AngularModuleConfig {
 		return $this->services;
 	}
 
-	function registerFactory($service, $factory) {
-		$this->factories[$service] = $factory;
+	function registerFactory($service) {
+		$this->factories[$service] = true;
 		return $this;
 	}
 
 	function getFactories() {
-		return $this->factories;
+		return array_keys($this->factories);
+	}
+
+	function registerRoutes(array $routes) {
+		$this->routes = array_merge($this->routes, $routes);
+		return $this;
+	}
+
+	function getRoutes() {
+		return $this->routes;
 	}
 
 	
