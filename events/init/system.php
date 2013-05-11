@@ -6,6 +6,7 @@ elgg_extend_view('js/elgg', 'js/evan');
 
 elgg_extend_view('js/elgg', 'js/elgg/composer');
 
+elgg_extend_view('page/elements/head', 'evan/html5', 1);
 
 elgg_register_ajax_view('blog/composer');
 elgg_register_ajax_view('bookmarks/composer');
