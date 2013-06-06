@@ -1,0 +1,42 @@
+.elgg-layout {
+        min-height: 360px;
+}
+.elgg-layout-one-sidebar {
+        background: transparent url(sidebar_background.gif) repeat-y right top;
+}
+.elgg-layout-two-sidebar {
+        background: transparent url(two_sidebar_background.gif) repeat-y right top;
+}
+.elgg-layout-widgets > .elgg-widgets {
+        float: right;
+}
+.elgg-layout-widgets > .elgg-col > .elgg-inner {
+        padding-left: 15px;
+}
+.elgg-layout-widgets > .elgg-col-last > .elgg-inner {
+        padding-left: 0;
+}
+.elgg-sidebar {
+        position: relative;
+        padding: 20px 10px;
+        float: right;
+        width: 210px;
+        margin: 0 0 0 10px;
+}
+.elgg-sidebar-alt {
+        position: relative;
+        padding: 20px 10px;
+        float: left;
+        width: 160px;
+        margin: 0 10px 0 0;
+}
+.elgg-main {
+        position: relative;
+        min-height: 360px;
+        padding: 10px;
+}
+.elgg-main > .elgg-head {
+        padding-bottom: 3px;
+        border-bottom: 1px solid #CCCCCC;
+        margin-bottom: 10px;
+}
