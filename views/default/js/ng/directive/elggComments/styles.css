@@ -1,0 +1,9 @@
+/* **************************************
+        Comments (from elgg_view_comments)
+************************************** */
+.elgg-comments {
+        margin-top: 25px;
+}
+.elgg-comments > form {
+        margin-top: 15px;
+}
