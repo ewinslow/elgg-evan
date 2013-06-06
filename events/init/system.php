@@ -11,6 +11,7 @@ elgg_extend_view('css/admin', 'js/ng/directive/elggFriendlyTime/styles.css');
 
 elgg_extend_view('js/elgg', 'js/elgg/composer');
 
+elgg_extend_view('page/elements/head', 'evan/html5', 1);
 
 elgg_register_admin_menu_item('administer', 'browse', 'users');
 
