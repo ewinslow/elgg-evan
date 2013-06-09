@@ -4,11 +4,11 @@
  */
 
 function from_atom($timestamp) {
-        return date_create_from_format(DateTime::ATOM, $timestamp)->getTimestamp();
+	return date_create_from_format(DateTime::ATOM, $timestamp)->getTimestamp();
 }
 
 function to_atom($timestamp) {
-        return date_format(date_timestamp_set(date_create(), $timestamp), DateTime::ATOM);
+	return date_format(date_timestamp_set(date_create(), $timestamp), DateTime::ATOM);
 }
 
 /**
@@ -305,16 +305,16 @@ function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
 
 elgg_register_event_handler('init:angular', 'elggAdmin', function($event, $type, AngularModuleConfig $elggAdmin) {
 
-        $elggAdmin
+		$elggAdmin
 		->registerValue('elgg', 'elgg')
 		->registerService('elggDatabase', 'elgg/Database')
-                ->registerDirective('elggFocusModel')
+		->registerDirective('elggFocusModel')
 		->registerDirective('elggFriendlyTime')	
 		->registerDirective('elggUsers')
-                ->registerDirective('whenScrolled')
+		->registerDirective('whenScrolled')
 		->registerFilter('elggEcho')
 		->registerValue('moment', 'moment')
-                ;
+		;
 
 });
 
@@ -325,33 +325,6 @@ function angular_get_module_config($name) {
 
         return $module;
 }
-
-elgg_register_event_handler('init', 'system', function() {
-	elgg_extend_view('page/elements/foot', 'evan/foot');
-
-	elgg_extend_view('css/elgg', 'css/elgg/link.css');
-
-        elgg_register_simplecache_view("js/ng/module/elggDefault.js");
-        elgg_register_simplecache_view("js/ng/module/elggAdmin.js");
-
-	elgg_register_js('require', '/vendors/requirejs/require-2.1.4.min.js', 'footer');
-	elgg_register_js('jquery', '/vendors/jquery/jquery-1.7.2.min.js', 'footer');
-	elgg_register_js('jquery-ui', '/vendors/jquery/jquery-ui-1.8.21.min.js', 'footer');
-	elgg_register_js('elgg', elgg_get_simplecache_url('js', 'elgg'), 'footer');
-
-        elgg_register_js('angular', array(
-		'src' => "//ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js",
-		'exports' => 'angular',
-	));
-        elgg_register_js('ng/module/ngResource', array(
-		'src' => "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.min.js",
-		'deps' => array('angular'),
-	));
-        elgg_register_js('ng/module/ngSanitize', array(
-		'src' => "//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-sanitize.min.js",
-		'deps' => array('angular'),
-	));
-});
 
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');
 elgg_register_event_handler('all', 'all', 'evan_event_handler');

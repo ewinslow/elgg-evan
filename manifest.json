@@ -1,0 +1,96 @@
+{
+	"views": {
+		"css/elgg": {
+			"extensions": {
+				"css/data-icon": 500,
+				"css/evan": 500,
+				"css/elgg/link.css": 500
+			}
+		},
+		"js/elgg": {
+			"extensions": {
+				"js/evan": 500,
+				"js/elgg/composer": 500
+			}
+		},
+		"page/elements/head": {
+			"extensions": {
+				"evan/html5": 1
+			}
+		},
+		"page/elements/foot": {
+			"extensions": {
+				"evan/foot": 500
+			}
+		},
+		"blog/composer": {
+			"ajax": true
+		},
+		"bookmarks/composer": {
+			"ajax": true
+		},
+		"file/composer": {
+			"ajax": true
+		},
+		"messageboard/composer": {
+			"ajax": true
+		},
+		"photos/composer": {
+			"ajax": true
+		},
+		"thewire/composer": {
+			"ajax": true
+		}
+	},
+	"routes": {
+		"/activity-json": "site/activity.json",
+		"/admin/plugins-json": "admin/plugins.json",
+		"/albums-json": "albums.json",	
+		"/album-json": "album.json",
+		"/comments-json": "comments.json",
+		"/entity-json": "entity.json",
+		"/image-json": "image.json",
+		"/likes-json": "likes.json",
+		"/posters-json": "site/posters.json",
+		"/users-json": "users.json"
+	},
+	"scripts": {
+		"jquery": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js",
+			"location": "head"
+		},
+		"require": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js",
+			"location": "head"
+		},
+		"jquery-ui": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"
+		},
+		"angular": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.5/angular.min.js",
+			"exports": "angular"
+		},
+		"ng/module/ngResource": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.5/angular-resource.min.js",
+			"deps": ["angular"]
+		},
+		"ng/module/ngSanitize": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular-sanitize.min.js",
+			"deps": ["angular"]
+		},
+		"moment": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.2/moment.min.js",
+			"deps": [],
+			"exports": "moment"
+		},
+		"text": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.5/text.js"
+		},
+		"css": {
+			"src": "//raw.github.com/guybedford/require-css/master/css.js"
+		},
+		"normalize": {
+			"src": "//raw.github.com/guybedford/require-css/master/normalize.js"
+		}
+	}
+}

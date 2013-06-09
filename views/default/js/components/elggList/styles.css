@@ -1,28 +1,4 @@
-/* ***************************************
-        List
-*************************************** */
-.elgg-list {
-        border-top: 1px dotted #CCCCCC;
-        margin: 5px 0;
-        clear: both;
-}
-.elgg-list > li {
-        border-bottom: 1px dotted #CCCCCC;
-}
-
-.elgg-item .elgg-subtext {
-        margin-bottom: 5px;
-}
-.elgg-item .elgg-content {
-        margin: 10px 5px;
-}
-
-
-/* River-specific styles */
-.elgg-list-river {
-        border-top: 1px solid #CCC;
-}
-.elgg-list-river > li {
-        border-bottom: 1px solid #CCC;
-}
-
+@import "base.css";
+@import "distinct.css";
+@import "simple.css";
+@import "river.css";

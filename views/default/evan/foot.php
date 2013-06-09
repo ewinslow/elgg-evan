@@ -1,16 +1,13 @@
-
-<script>
-
 <?php
 
 $module = elgg_in_context('admin') ? 'elggAdmin' : 'elggDefault';
 
-echo <<<BOOT
-require(['angular', 'ng/module/$module'], function(angular) {
-	angular.bootstrap(document, ['$module']);
+$boot = <<<BOOT
+<script>
+require(['angular', 'ng/module/$module'], function(angular, ngModule) {
+	angular.bootstrap(document, [ngModule.name]);
 });
+</script>
 BOOT;
 
-?>
-
-</script>
+echo $boot;

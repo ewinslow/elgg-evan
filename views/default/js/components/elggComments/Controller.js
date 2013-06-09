@@ -1,11 +1,10 @@
 define(function(require) {
-	var $ = require('jquery');
 	var Collection = require('activitystreams/Collection');
+	var angular = require('angular');
 	
-	return function($scope, elgg) {
-		$scope.user = elgg.session.user;
-		
+	function Controller($scope, elgg, $http) {
 		var comments = {
+			totalItems: 13,
 			items: [{
 				author: {
 					displayName: 'Evan Winslow',
@@ -18,52 +17,56 @@ define(function(require) {
 					canDelete: true
 				}
 			},{
-                                author: {
-                                        displayName: 'Evan Winslow',
-                                        image: {
-                                                url: 'http://www.gravatar.com/avatar/HASH?d=mm'
-                                        }
-                                },
-				content: 'BOoya!',
+				author: {
+					displayName: 'Evan Winslow',
+					image: {
+						url: 'http://www.gravatar.com/avatar/HASH?d=mm'
+					}
+				},
+				content: 'BOoya!'
 			},{
-                                author: {
-                                        displayName: 'Evan Winslow',
-                                        image: {
-                                                url: 'http://www.gravatar.com/avatar/HASH?d=mm'
-                                        }
-                                },
-				content: 'There is nothing to say!',
-			}],
-			totalItems: 13
-		}
-
-		Collection.call($scope, comments);
-
-		$scope.submit = function() {
-			var newComment = {
-				content: this.newComment,
-				author: this.user,
-			};
-            
-			comments.items.push(newComment);
-			comments.totalItems++;
-            
-			elgg.action('comments/add', {
-				entity_guid: this.object.guid,
-				generic_comment: this.newComment
-			}).then(function(json) {
-				$.extend(newComment, json.output);
-			}).done(function() {
-				$scope.$digest();
-			});
-            
-			this.reset();
+				author: {
+					displayName: 'Evan Winslow',
+					image: {
+						url: 'http://www.gravatar.com/avatar/HASH?d=mm'
+					}
+				},
+				content: 'There is nothing to say!'
+			}]
 		};
-        
-		$scope.reset = function() {
-			this.newComment = {};
-			this.isCommenting = false;
-			this.startCommentingButtonFocused = true;
+
+		Collection.call(this, comments, $http);
+		
+		$scope.user = elgg.session.user;
+		$scope.ctrl = this;
+		
+		/** @private */
+		this.elgg = elgg;
+		
+		/** @private */
+		this.$scope = $scope;
+	};
+	elgg.inherit(Controller, Collection);
+
+	Controller.prototype.submit = function() {
+		this.collection.items.push(this.newComment);
+		this.collection.totalItems++;
+		
+		// TODO Extract this out as a comments service
+		this.elgg.action('comments/add', {
+			entity_guid: this.object.guid,
+			generic_comment: this.newComment.content
+		}).then(function(json) {
+			angular.extend(this.newComment, json.output);
+		}.bind(this)).done(function() {
+			this.$scope.$digest();
+		}.bind(this));
+		
+		this.newComment = {
+			author: this.elgg.session.user,
+			content: ''
 		};
 	};
+
+	return Controller;
 });

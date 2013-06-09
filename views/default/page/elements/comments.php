@@ -17,4 +17,4 @@ $attributes = array(
 );
 ?>
 
-<div data-elgg-comments <?php echo elgg_format_attributes($attributes); ?>></div>
+<elgg-comments <?php echo elgg_format_attributes($attributes); ?>></elgg-comments>

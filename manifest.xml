@@ -3,8 +3,7 @@
 	<name>Evan's Framework</name>
 	<author>Evan Winslow</author>
 	<version>1.11</version>
-	<description>Provides some development conveniences</description>
-	<website>http://www.ewinslow.com/</website>
+	<description>Provides some development conveniences for Elgg</description>
 	<copyright>(C) 2012 Evan Winslow</copyright>
 	<license>MIT</license>
 	<requires>

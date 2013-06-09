@@ -1,59 +1,54 @@
 <div class="elgg-river-comments-drawer clearfloat">
-	<div class="elgg-river-response elgg-river-more" data-ng-show="hasRemainingItems() && !isLoadingPreviousItems()">
-		<button class="elgg-link" data-ng-click="loadPreviousItems()">
-			{{ "river:comments:more" | elggEcho:[getRemainingItemsCount()] }}
+	<div class="elgg-river-response elgg-river-more" ng-show="ctrl.hasRemainingItems() && !ctrl.isLoadingPreviousItems()">
+		<button class="elgg-link" ng-click="ctrl.loadPreviousItems()">
+			{{ "river:comments:more" | elggEcho:[ctrl.getRemainingItemsCount()] }}
 		</button>
 	</div>
-	<div class="elgg-ajax-loader centered" data-ng-show="isLoadingPreviousItems()"></div>
+	<div class="elgg-ajax-loader centered" ng-show="ctrl.isLoadingPreviousItems()"></div>
 	<ul class="elgg-list elgg-river-comments">
-		<li class="elgg-river-response" data-ng-repeat="comment in getItems() | orderBy:'published'">
+		<li class="elgg-river-response" ng-repeat="comment in ctrl.getItems() | orderBy:'published'">
 			<div class="elgg-image-block"
-			     data-ng-mouseenter="hovering = true"
-			     data-ng-mouseleave="hovering = false">
+			     ng-mouseenter="hovering = true"
+			     ng-mouseleave="hovering = false">
 
-				<a href="{{comment.author.url}}" class="elgg-image">
-					<img data-ng-src="{{comment.author.image.url}}" width="40" height="40" />
-				</a>
+				<elgg-avatar entity="comment.author" size="small" class="elgg-image"></elgg-avatar>
 				<div class="elgg-body">
 					<button class="elgg-icon elgg-icon-delete float-alt"
-						title="Delete this comment"
-						data-ng-show="hovering && comment.elgg.canDelete && !deleting"
-						data-ng-click="delete()">
+					        title="{{ 'comment:delete' | elggEcho }}"
+					        ng-show="hovering && comment.elgg.canDelete && !isDeleting"
+					        ng-click="ctrl.deleteComment(comment)">
+						{{ 'delete' | elggEcho }}
 					</button>
-					<div class="elgg-ajax-loader float-alt" data-ng-show="deleting"></div>
+					<div class="elgg-ajax-loader float-alt" ng-show="isDeleting"></div>
 					<div>
 						<a href="{{comment.author.url}}">{{comment.author.displayName}}</a>
-						<time data-elgg-friendly-time datetime="{{comment.published}}" class="elgg-subtext">
-			    				Some time ago
-						</time>
+						<time elgg-friendly-time datetime="{{comment.published}}" class="elgg-subtext"></time>
 					</div>
-					<div data-ng-bind-html="comment.content"></div>
+					<div ng-bind-html="comment.content"></div>
 				</div>
 			</div>
 		</li>
 	</ul>
-	<div class="elgg-river-response" data-ng-show="user && !isCommenting">
-		<button class="elgg-link" data-elgg-focus-model="isDoneCommenting"
-		        data-ng-click="isCommenting = true">
+	<div class="elgg-river-response" ng-show="user && !isCommenting">
+		<button class="elgg-link" elgg-name="leaveCommentButton"
+		        ng-click="isCommenting = true; commentContentInput.focus()">
 			{{ 'Leave a comment...' | elggEcho }}
 		</button>
 	</div>
 	<form class="elgg-image-block elgg-form elgg-form-comments-add" 
-	      data-ng-show="user && isCommenting" 
-	      data-ng-submit="submit()">
-          
-		<div class="elgg-image">
-			<img data-ng-src="{{user.image.url}}" width="40" height="40" alt="{{user.displayName}}" />
-		</div>
+	      ng-show="user && isCommenting" 
+	      ng-submit="ctrl.submit(); leaveCommentButton.focus(); isCommenting = false">
+
+		<elgg-avatar entity="comment.author" size="small" class="elgg-image"></elgg-avatar>
 		<div class="elgg-body">
-			<textarea required data-ng-model="newComment.content"
-			          data-elgg-focus-model="isCommenting">
+			<textarea required ng-model="ctrl.newComment.content"
+			          elgg-name="commentContentInput">
 			</textarea>
 			<button class="elgg-button elgg-button-submit">
 				{{ 'Comment' | elggEcho }}
 			</button>
 			<button class="elgg-button elgg-button-cancel" 
-			        data-ng-click="isDoneCommenting = true">
+			        ng-click="isCommenting = false; leaveCommentButton.focus()">
 				{{ 'Cancel' | elggEcho }}
 			</button>
 		</div>
