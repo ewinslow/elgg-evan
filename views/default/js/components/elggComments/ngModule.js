@@ -15,6 +15,7 @@ define(function(require) {
 		require('components/elggFriendlyTime/ngModule').name,
 		require('ng/filter/elggEcho').name,
 		require('ng/service/elgg').name,
+		require('ng/service/evanCommentsStorage').name,
 		'ngSanitize' //ng-bind-html
 	];
 	
@@ -28,7 +29,12 @@ define(function(require) {
 				entity: '='
 			},
 			template: require("text!./template.html"),
-			controller: require('./Controller')
+			controller: require('./Controller'),
+			link: function($scope, $element, $attrs) {
+				var size = $attrs.size || 'small';
+				
+				$element.addClass('elgg-avatar-' + size);
+			}
 		};
 	});
 });

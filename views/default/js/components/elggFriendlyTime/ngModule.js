@@ -5,11 +5,11 @@ define(function(require) {
 	var angular = require('angular');
 	var moment = require('moment');
 	
-	var directive = 'elggFriendlyTime';
-	var module = directive + 'Directive';
+	var id = 'elggFriendlyTime';
+	var module = id + 'Directive';
 	var deps = [];
 	
-	return angular.module(module, deps).directive(directive, function() {
+	return angular.module(module, deps).directive(id, function() {
 		return {
 			restrict: 'A',
 			link: function($scope, $element, $attrs) {

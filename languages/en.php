@@ -1,6 +1,6 @@
 <?php
 
-add_translation('en', array(
+return array(
 	'admin:users:browse' => 'Browse',
 
 	'composer:object:thewire' => "Post",
@@ -14,4 +14,4 @@ add_translation('en', array(
 	'spam' => 'Spam',
 	
 	'tinymce:toggle' => 'Toggle editor',
-));
+);

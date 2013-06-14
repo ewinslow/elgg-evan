@@ -3,7 +3,7 @@
  * 
  */
 
-function from_atom($timestamp) {
+function from_atom($timestamp) {	
 	return date_create_from_format(DateTime::ATOM, $timestamp)->getTimestamp();
 }
 
@@ -188,6 +188,14 @@ function elgg_get_comments_proto(ElggEntity $entity) {
 	return $comments_json;
 }
 
+function elgg_get_comment_proto($comment) {
+	return array(
+		'author' => elgg_get_person_proto($comment->getOwnerEntity()),
+		'published' => to_atom($comment->getTimeCreated()),
+		'content' => $comment->value,
+	);
+}
+
 function elgg_get_plugin_proto(ElggPlugin $plugin) {
 	$pluginJson = array(
 		'guid' => $plugin->guid,
@@ -301,29 +309,6 @@ function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
 		'object' => $object,
 		'target' => $target,
 	), $result);
-}
-
-elgg_register_event_handler('init:angular', 'elggAdmin', function($event, $type, AngularModuleConfig $elggAdmin) {
-
-		$elggAdmin
-		->registerValue('elgg', 'elgg')
-		->registerService('elggDatabase', 'elgg/Database')
-		->registerDirective('elggFocusModel')
-		->registerDirective('elggFriendlyTime')	
-		->registerDirective('elggUsers')
-		->registerDirective('whenScrolled')
-		->registerFilter('elggEcho')
-		->registerValue('moment', 'moment')
-		;
-
-});
-
-function angular_get_module_config($name) {
-        $module = new AngularModuleConfig($name);
-
-        elgg_trigger_event('init:angular', $name, $module);
-
-        return $module;
 }
 
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');

@@ -1,72 +1,62 @@
 define(function(require) {
-	var Collection = require('activitystreams/Collection');
 	var angular = require('angular');
+	var Collection = require('evan/Collection');
+	var newClass = require('evan/newClass');
 	
-	function Controller($scope, elgg, $http) {
-		var comments = {
-			totalItems: 13,
-			items: [{
-				author: {
-					displayName: 'Evan Winslow',
-					image: {
-						url: 'http://www.gravatar.com/avatar/HASH?d=mm'
-					}
-				},
-				content: "Can't touch this!",
-				elgg: {
-					canDelete: true
-				}
-			},{
-				author: {
-					displayName: 'Evan Winslow',
-					image: {
-						url: 'http://www.gravatar.com/avatar/HASH?d=mm'
-					}
-				},
-				content: 'BOoya!'
-			},{
-				author: {
-					displayName: 'Evan Winslow',
-					image: {
-						url: 'http://www.gravatar.com/avatar/HASH?d=mm'
-					}
-				},
-				content: 'There is nothing to say!'
-			}]
-		};
-
-		Collection.call(this, comments, $http);
+	return newClass({
+		'extends': Collection,
 		
-		$scope.user = elgg.session.user;
-		$scope.ctrl = this;
+		constructor: function($scope, elgg, evanCommentsStorage, $http) {
+			var data = { items: [] };
+			Collection.call(this, data, $http);
+			
+			$scope.ctrl = this;
+	
+			this.isCommenting = false;
+	
+			this.user = elgg.session.user;
+	
+			/** @private */
+			this.entity_guid = $scope.entity;
+			
+			/** @private */
+			this.comments = evanCommentsStorage;
+	
+			this.comments.getForEntity($scope.entity).then(function(collection) {
+				angular.extend(data, collection);
+			});
+		},
 		
-		/** @private */
-		this.elgg = elgg;
+		submit: function() {
+			var comment = {
+				author: this.user,
+				content: this.newComment
+			};
+			
+			this.getItems().push(comment);
+			
+			this.comments.add({
+				entity_guid: this.entity_guid,
+				generic_comment: this.newComment
+			}).then(function(commentEntity) {
+				angular.extend(comment, commentEntity);
+			}.bind(this), function() {
+				this.remove(comment);
+				this.newComment = comment.content;
+			}.bind(this));
+			
+			this.newComment = '';
+			this.isCommenting = false;
+		},
 		
-		/** @private */
-		this.$scope = $scope;
-	};
-	elgg.inherit(Controller, Collection);
-
-	Controller.prototype.submit = function() {
-		this.collection.items.push(this.newComment);
-		this.collection.totalItems++;
-		
-		// TODO Extract this out as a comments service
-		this.elgg.action('comments/add', {
-			entity_guid: this.object.guid,
-			generic_comment: this.newComment.content
-		}).then(function(json) {
-			angular.extend(this.newComment, json.output);
-		}.bind(this)).done(function() {
-			this.$scope.$digest();
-		}.bind(this));
-		
-		this.newComment = {
-			author: this.elgg.session.user,
-			content: ''
-		};
-	};
-
-	return Controller;
+		remove: function(comment) {
+			var idx = this.getItems().indexOf(comment);
+			
+			if (idx > -1) {
+				this.getItems().splice(idx, 1);
+			}
+			
+			// this.comments.remove(comment);
+		}		
+	});
 });

@@ -16,9 +16,15 @@ class EvanRoute {
 		}
 	}
 	
-	private static function register(array $routeMap) {
+	public static function registerOne($route, $file) {
+		self::$routes[$route] = $file;
+	}
+	
+	private static function registerMany(array $routeMap) {
 		self::$routes = array_merge(self::$routes, $routeMap);
 	}
+	
+	
 	
 	public static function route($path) {
 		foreach (self::$routes as $route => $handler) {
@@ -29,14 +35,10 @@ class EvanRoute {
 				}
 
 				// Find the page handler in the plugin with the highest priority
-				foreach (array_reverse(evan_get_plugins()) as $plugin) {
-					$file = elgg_get_plugins_path() . "$plugin/pages/$handler.php";
-					if (file_exists($file)) {
-						require_once $file;
-						return false; // Prevent further routing
-					}
+				if (file_exists($handler)) {
+					require_once $handler;
+					return false; // Prevent further routing
 				}
-		
 			}
 		}
 	}

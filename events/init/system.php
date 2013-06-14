@@ -38,3 +38,9 @@ foreach ($manifest['views'] as $view => $options) {
 		elgg_register_simplecache_view($view);
 	}
 }
+
+foreach ($manifest['routes'] as $route => $path) {
+	$file = elgg_get_plugins_path() . "evan/pages/$path.php";
+	// echo "$file <br>";
+	EvanRoute::registerOne($route, $file);
+}

@@ -1,15 +1,15 @@
 define(function(require) {
 	/**
-	 * Manages an activitystreams collection.
-	 * @param {Object} collection
+	 * Manages an Activity-Streams style collection.
+	 * @param {Object} data
 	 * @param {angular.$http} $http
 	 * 
 	 * @constructor
 	 * @ngInject
 	 */
-	function Collection(collection, $http) {
+	function Collection(data, $http) {
 		/** @private */
-		this.collection = collection;
+		this.data = data;
 		
 		/** @private */
 		this.$http = $http;
@@ -19,7 +19,7 @@ define(function(require) {
 	 * @return {number} How many items are left to load.
 	 */
 	Collection.prototype.getRemainingItemsCount = function() {
-		return this.collection.totalItems - this.collection.items.length;
+		return this.data.totalItems - this.data.items.length;
 	};
 
 	/**
@@ -33,21 +33,21 @@ define(function(require) {
 	 * @return {!Array} The local items in this collection.
 	 */
 	Collection.prototype.getItems = function() {
-		return this.collection.items || [];
+		return this.data.items || [];
 	};
 
 	/**
 	 * @return {number} The total number of items in this collection on the server.
 	 */
 	Collection.prototype.getTotalItems = function() {
-		return this.collection.totalItems;
+		return this.data.totalItems;
 	};
 
 	/**
 	 * @todo Rename to "push()"
 	 */
 	Collection.prototype.appendItem = function(item) {
-		this.collection.items.push(item);
+		this.data.items.push(item);
 	};
 	
 	/**
@@ -56,9 +56,9 @@ define(function(require) {
 	 * @private
 	 */
 	Collection.prototype.appendCollection = function(newCollection) {
-		this.collection.totalItems = newCollection.totalItems;
+		this.data.totalItems = newCollection.totalItems;
 		newCollection.items.forEach(this.appendItem, this);
-		this.collection.links.next = newCollection.items.length ? newCollection.links.next : null;
+		this.data.links.next = newCollection.items.length ? newCollection.links.next : null;
 	};
 
 	/**
@@ -83,7 +83,7 @@ define(function(require) {
 		}
 	
 		var resetLoadingNext = this.resetLoadingNext.bind(this);
-		return this.loadingNextItems = this.$http_.get(this.collection.links.next.href).
+		return this.loadingNextItems = this.$http_.get(this.data.links.next.href).
 			then(this.appendCollection.bind(this)).
 			then(resetLoadingNext, resetLoadingNext);
 	};
@@ -92,7 +92,7 @@ define(function(require) {
 	 * @return {boolean} Whether there are items to load that are "after" the ones already loaded.
 	 */
 	Collection.prototype.hasNextItems = function() {
-		return !!(this.collection.links && this.collection.links.next);
+		return !!(this.data.links && this.data.links.next);
 	};
 
 	/**
@@ -106,7 +106,7 @@ define(function(require) {
 	 * @return {string} The time of the least recently published object.
 	 */
 	Collection.prototype.getOldestPublishedTime = function() {
-		return this.collection.items.map(function(object) { 
+		return this.data.items.map(function(object) { 
 			return object.published; 
 		}).sort()[0];
 	};
@@ -117,7 +117,7 @@ define(function(require) {
 	Collection.prototype.indexOfEntity = function(entity) {
 		var index = -1;
 		
-		this.collection.items.forEach(function(item, idx) {
+		this.data.items.forEach(function(item, idx) {
 			if (item.guid == entity.guid) {
 				index = idx;
 			}
@@ -132,7 +132,7 @@ define(function(require) {
 	Collection.prototype.indexOfAnnotation = function(annotation) {
 		var index = -1;
 		
-		this.collection.items.forEach(function(item, idx) {
+		this.data.items.forEach(function(item, idx) {
 			if (item.annotation_id == annotation.annotation_id) {
 				index = idx;
 			}

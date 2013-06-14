@@ -7,12 +7,6 @@
 				"css/elgg/link.css": 500
 			}
 		},
-		"js/elgg": {
-			"extensions": {
-				"js/evan": 500,
-				"js/elgg/composer": 500
-			}
-		},
 		"page/elements/head": {
 			"extensions": {
 				"evan/html5": 1
@@ -22,24 +16,6 @@
 			"extensions": {
 				"evan/foot": 500
 			}
-		},
-		"blog/composer": {
-			"ajax": true
-		},
-		"bookmarks/composer": {
-			"ajax": true
-		},
-		"file/composer": {
-			"ajax": true
-		},
-		"messageboard/composer": {
-			"ajax": true
-		},
-		"photos/composer": {
-			"ajax": true
-		},
-		"thewire/composer": {
-			"ajax": true
 		}
 	},
 	"routes": {
@@ -55,12 +31,12 @@
 		"/users-json": "users.json"
 	},
 	"scripts": {
-		"jquery": {
-			"src": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js",
-			"location": "head"
-		},
 		"require": {
 			"src": "//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js",
+			"location": "head"
+		},
+		"jquery": {
+			"src": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js",
 			"location": "head"
 		},
 		"jquery-ui": {
