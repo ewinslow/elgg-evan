@@ -5,7 +5,7 @@ define(function(require) {
 	var id = 'evanCommentsStorage';
 	var module = id + 'Service';
 	var deps = [
-		require('ng/service/elgg').name	
+		require('ng/services/elgg').name	
 	];
 
 	return angular.module(module, deps).service(id, CommentsStorage);

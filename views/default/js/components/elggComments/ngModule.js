@@ -1,22 +1,21 @@
 define(function(require) {
 
-	require('css!./styles');
-	require('css!components/elggAjaxLoader/styles');
-	require('css!components/elggButton/styles');
-	require('css!components/elggIcon/styles');
-	require('css!components/elggImageBlock/styles');
-
-	require('ng/module/ngSanitize');
+	// require('css!./styles');
+	// require('css!components/elggAjaxLoader/styles');
+	// require('css!components/elggButton/styles');
+	// require('css!components/elggIcon/styles');
+	// require('css!components/elggImageBlock/styles');
+	require('angular-sanitize'); // for ng-bind-html
 
 	var angular = require('angular');
 	
 	var deps = [
 		require('components/elggAvatar/ngModule').name,
 		require('components/elggFriendlyTime/ngModule').name,
-		require('ng/filter/elggEcho').name,
-		require('ng/service/elgg').name,
-		require('ng/service/evanCommentsStorage').name,
-		'ngSanitize' //ng-bind-html
+		require('ng/filters/elggEcho').name,
+		require('ng/services/elgg').name,
+		require('ng/services/evanCommentsStorage').name,
+		'ngSanitize' // for ng-bind-html
 	];
 	
 	var id = 'elggComments';
@@ -29,12 +28,7 @@ define(function(require) {
 				entity: '='
 			},
 			template: require("text!./template.html"),
-			controller: require('./Controller'),
-			link: function($scope, $element, $attrs) {
-				var size = $attrs.size || 'small';
-				
-				$element.addClass('elgg-avatar-' + size);
-			}
+			controller: require('./Controller')
 		};
 	});
 });

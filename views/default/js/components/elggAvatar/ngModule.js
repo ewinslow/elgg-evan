@@ -1,6 +1,6 @@
 define(function(require) {
 
-	require('css!./styles');
+	// require('css!./styles');
 
 	var angular = require('angular');
 	
@@ -15,7 +15,12 @@ define(function(require) {
 			scope: {
 				entity: '='
 			},
-			template: require("text!./template.html")
+			template: require("text!./template.html"),
+			link: function($scope, $element, $attrs) {
+				var size = $attrs.size || 'small';
+				
+				$element.addClass('elgg-avatar-' + size);
+			}
 		};
 	});
 });

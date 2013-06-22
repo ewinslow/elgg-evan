@@ -4,7 +4,7 @@ define(function(require) {
 	var id = 'elggEcho';
 	var module = id + 'Filter';
 	var deps = [
-		require('ng/service/elgg').name	
+		require('ng/services/elgg').name	
 	];
 	
 	return angular.module(module, deps).filter(id, function(elgg) {
