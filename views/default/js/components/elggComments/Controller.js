@@ -6,7 +6,7 @@ define(function(require) {
 	return newClass({
 		'extends': Collection,
 		
-		constructor: function($scope, elgg, evanCommentsStorage, $http) {
+		constructor: function($scope, evanUser, evanCommentsStorage, $http) {
 			var data = { items: [] };
 			Collection.call(this, data, $http);
 			
@@ -14,7 +14,7 @@ define(function(require) {
 	
 			this.isCommenting = false;
 	
-			this.user = elgg.session.user;
+			this.user = evanUser;
 	
 			/** @private */
 			this.entity_guid = $scope.entity;

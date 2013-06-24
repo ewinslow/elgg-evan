@@ -1,34 +1,36 @@
 define(function(require) {
-	var Database = function($http, elgg) {
-		this.$http = $http;
-		this.elgg = elgg;
-	};
+	var newClass = require('evan/newClass');
 	
-	Database.prototype.getObject = function(url, data) {
-		return this.$http.get(this.elgg.normalize_url(url), {params:data}).then(function(result) {
-			return result.data;
-		});
-	};
+	return newClass({
+		constructor: function($http, elgg) {
+			this.$http = $http;
+			this.elgg = elgg;
+		},
+		
+		getObject: function(url, data) {
+			return this.$http.get(this.elgg.normalize_url(url), {params:data}).then(function(result) {
+				return result.data;
+			});
+		},
+	
+		getEntity: function(guid) {
+			return this.getObject('/entity-json', {guid: guid});
+		},
 
-	Database.prototype.getEntity = function(guid) {
-		return this.getObject('/entity-json', {guid: guid});
-	};
-
-	Database.prototype.getActivity = function() {
-		return this.getObject('/activity-json');
-	};
+		getActivity: function() {
+			return this.getObject('/activity-json');
+		},
+		
+		getUsers: function(data) {
+			return this.getObject('/users-json', data);
+		},
+		
+		getPlugin: function(id) {
+			return this.getObject('/admin/plugins-json', {id:id});
+		},
 	
-	Database.prototype.getUsers = function(data) {
-		return this.getObject('/users-json', data);
-	};
-	
-	Database.prototype.getPlugin = function(id) {
-		return this.getObject('/admin/plugins-json', {id:id});
-	};
-
-	Database.prototype.getAlbums = function() {
-		return this.getObject('/albums-json');
-	};
-	
-	return Database;
+		getAlbums: function() {
+			return this.getObject('/albums-json');
+		},
+	});
 });

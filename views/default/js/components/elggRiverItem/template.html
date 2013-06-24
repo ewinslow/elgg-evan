@@ -1,28 +1,28 @@
 <div class="elgg-image-block elgg-river-item">
     <a href="{{activity.actor.url}}" class="elgg-image">
-        <img data-ng-src="{{activity.actor.image.url}}" alt="" width="60" height="60" />                    
+        <img ng-src="{{activity.actor.image.url}}" alt="" width="60" height="60" />                    
     </a>
     <div class="elgg-body pas">
 		<!-- Main content -->
 		<div class="elgg-river-summary">
-			<span data-ng-bind-html="activity.title"></span>
+			<span ng-bind-html="activity.title"></span>
 			<time datetime="{{activity.published}}" class="elgg-river-timestamp" title="{{activity.published | calendar}}">
 				{{activity.published | fromNow}}
 			</time>
 		</div>
 		<div class="elgg-river-message" ng-bind-html="activity.object.content"></div>
 		
-		<img data-ng-src="{{getMediaAttachment().fullImage.url}}" width="100%" data-ng-show="!!getMediaAttachment()" />
+		<img ng-src="{{ctrl.getMediaAttachment().fullImage.url}}" width="100%" ng-show="!!ctrl.getMediaAttachment()" />
 		
-		<ul class="tidypics-river-list" data-ng-show="!!getMediaAttachments().length">
-			<li class="tidypics-photo-item" data-ng-repeat="media in getMediaAttachments()">
+		<ul class="tidypics-river-list" ng-show="!!ctrl.getMediaAttachments().length">
+			<li class="tidypics-photo-item" ng-repeat="media in ctrl.getMediaAttachments()">
 				<a href="{{media.url}}">
-					<img data-ng-src="{{media.image.url}}" width="88" height="88" class="elgg-photo"
-					     alt="{{media.displayName}}" title="{{media.displayName}}" />
+					<img ng-src="{{media.image.url}}" width="88" height="88" class="elgg-photo"
+					     alt="{{media.displayName}}" title="{{media.displayName}}">
 				</a>
 			</li>
 		</ul>
 		
-		<div data-elgg-responses data-object="activity.object"></div>
+		<div elgg-responses object="activity.object"></div>
     </div>
 </div>

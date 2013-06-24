@@ -1,7 +1,5 @@
 define(function(require) {
 
-	// require('css!./styles');
-
 	var angular = require('angular');
 	
 	var id = 'elggAvatar';

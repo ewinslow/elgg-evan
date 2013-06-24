@@ -2,9 +2,9 @@ define(function(require) {
 	var $ = require('jquery');
 	var Collection = require('activitystreams/Collection');
 	
-	return function($scope, elgg, elggLoggedInUser) {
+	return function($scope, elgg, evanUser) {
 		// Likes-related //
-		$scope.user = elggLoggedInUser;
+		$scope.user = evanUser;
 		
         $scope.getLikes = function(limit) {
         	return this.object.likes.items.slice(0, limit);

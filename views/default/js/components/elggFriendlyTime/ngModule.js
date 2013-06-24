@@ -1,6 +1,6 @@
 define(function(require) {
 	
-	require('css!./styles');
+	// require('css!./styles');
 	
 	var angular = require('angular');
 	var moment = require('moment');

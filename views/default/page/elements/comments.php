@@ -8,8 +8,6 @@
  * @uses $vars['class']         Optional additional class for the div
  */
 
-elgg_require_js('apps/elggDefault');
-
 $entity = $vars['entity'];
 
 $attributes = array(

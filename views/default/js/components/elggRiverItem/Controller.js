@@ -1,11 +1,15 @@
-// <script>
 define(function(require) {
-	var Collection = require('activitystreams/Collection');
+	var newClass = require('evan/newClass');
 	
-	return function($scope, $http, elggSession, elgg, moment) {    
-		$scope.user = elggSession.user;
-
-		$scope.getMediaAttachment = function() {
+	return newClass({
+		
+		constructor: function($scope) {    
+			$scope.ctrl = this;
+			
+			this.activity = $scope.activity;
+		},
+		
+		getMediaAttachment: function() {
 			var index = -1;
 			
 			this.activity.object.attachments.forEach(function(item, idx) {
@@ -19,12 +23,12 @@ define(function(require) {
 			}
 
 			return this.activity.object.attachments[index];
-		};
+		},
 		
-		$scope.getMediaAttachments = function() {
+		getMediaAttachments: function() {
 			return this.activity.object.attachments.filter(function(item) {
 				return !!item.image;
 			});
-		};
-    };
+		},
+	});
 });

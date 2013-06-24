@@ -1,10 +1,5 @@
 define(function(require) {
 
-	// require('css!./styles');
-	// require('css!components/elggAjaxLoader/styles');
-	// require('css!components/elggButton/styles');
-	// require('css!components/elggIcon/styles');
-	// require('css!components/elggImageBlock/styles');
 	require('angular-sanitize'); // for ng-bind-html
 
 	var angular = require('angular');
@@ -13,8 +8,9 @@ define(function(require) {
 		require('components/elggAvatar/ngModule').name,
 		require('components/elggFriendlyTime/ngModule').name,
 		require('ng/filters/elggEcho').name,
-		require('ng/services/elgg').name,
 		require('ng/services/evanCommentsStorage').name,
+		require('ng/services/evanUser').name,
+		require('ng/directives/ngFocus').name,
 		'ngSanitize' // for ng-bind-html
 	];
 	

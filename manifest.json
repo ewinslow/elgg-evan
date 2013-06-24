@@ -9,11 +9,18 @@
 		},
 		"page/elements/head": {
 			"extensions": {
-				"evan/html5": 1
+				"evan/html5": 1,
+				"evan/user": 2
 			}
 		}
 	},
 	"routes": {
+		"/activity": "site/activity",
+		"/login": "account/login",
+		"/register": "account/register",
+		"/forgotpassword": "account/forgotten_password",
+	
+		
 		"/activity-json": "site/activity.json",
 		"/admin/plugins-json": "admin/plugins.json",
 		"/albums-json": "albums.json",	
@@ -73,6 +80,12 @@
 		"normalize": {
 			"url": "https://github.com/guybedford/require-css",
 			"src": "//raw.github.com/guybedford/require-css/master/normalize.js"
+		}
+	},
+	"styles": {
+		"normalize": {
+			"url": "http://necolas.github.io/normalize.css/",
+			"href": "//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.0/normalize.css"
 		}
 	}
 }
