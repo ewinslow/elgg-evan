@@ -26,10 +26,15 @@ header("Content-type: text/html; charset=UTF-8");
 </head>
 <body>
 <div class="elgg-page elgg-page-default">
-	<div class="elgg-page-messages">
-		<?php echo $messages; ?>
-	</div>
 	
+	<?php if (elgg_is_logged_in()) { ?>
+	<div class="elgg-page-topbar">
+		<div class="elgg-inner">
+			<?php echo elgg_view('page/elements/topbar', $vars); ?>
+		</div>
+	</div>
+	<?php } ?>
+
 	<header class="elgg-page-header">
 		<div class="elgg-inner">
 			<?php echo $header; ?>

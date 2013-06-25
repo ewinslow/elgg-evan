@@ -3,11 +3,11 @@ define(function(require) {
 	
 	var Controller = newClass({
 		constructor: function($scope, river, evanUser) {
-			$scope.ctrl = this;
-			
 			this.$scope = $scope;
 			this.river = river;
-			this.user = evanUser;			
+
+			$scope.ctrl = this;
+			$scope.target = evanUser;
 		},
 		
 		loadNextItems: function() {

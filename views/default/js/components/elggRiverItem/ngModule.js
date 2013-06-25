@@ -6,7 +6,7 @@ define(function(require) {
 	var deps = [
 		require('ng/filters/calendar').name,
 		require('ng/filters/fromNow').name,
-		// require('components/elggResponses/ngModule').name,
+		require('components/elggResponses/ngModule').name,
 		'ngSanitize', // ng-bind-html
 	];
 	
