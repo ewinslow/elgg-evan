@@ -6,7 +6,7 @@ think would be useful in Elgg core.
 ## Requirements
 
 * PHP 5.3
-* Elgg 1.8.3
+* Elgg 1.9-dev
 
 ## Setup
 
@@ -16,7 +16,7 @@ to your plugin's manifest.xml:
 	<requires>
 		<type>plugin</type>
 		<name>evan</name>
-		<version>1.11</version>
+		<version>2.0-dev</version>
 	</requires>
 	<requires>
 		<type>priority</type>
@@ -26,6 +26,67 @@ to your plugin's manifest.xml:
 
 
 ## Features
+
+### manifest.json
+
+This framework adds support for declaratively setting up your plugin via a
+manifest.json file.
+
+Instead of using all the registration functions elgg provides, you can just
+create a JSON structure and we'll register it all for you in the right order, etc.
+
+#### `elgg_register_js` => "scripts"
+
+```json
+{
+	"scripts": {
+		"foo": {
+			"url": "http://foojs.org/"
+			"src": "//cdnjs.cloudflare.com/ajax/libs/foo.js/x.y.z/foo-min.js",
+			"deps": ["bar"],
+			"exports": "foo",
+			"location": "footer"
+		}
+	}
+}
+```
+
+#### `elgg_register_css` => "styles"
+
+```json
+{
+	"styles": {
+		"normalize": {
+			"url": "http://necolas.github.io/normalize.css/",
+			"href": "//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.0/normalize.css"
+		}
+	}
+}
+```
+
+#### `elgg_extend_view`, `elgg_register_simplecache_view`, `elgg_register_ajax_view` => "views"
+
+Traditionally you do this in your init,system hook handler:
+```php
+elgg_register_ajax_view('page/elements/head');
+elgg_register_simplecache_view('page/elements/head');
+elgg_extend_view('page/elements/head', 'evan/html5', 1);
+```
+
+With my framework, you can just do this in manifest.json:
+```json
+{
+	"views": {
+		"page/elements/head": {
+			"ajax": true,
+			"cache": true,
+			"extensions": {
+				"evan/html5": 1
+			}
+		}
+	}
+}
+```
 
 ### Viewing entities with `evan_view_entity()`
 
@@ -64,23 +125,25 @@ will be forced to `true`, which is often not what you want.
 
 ### Simplified routing system
 
-Using this plugin for routing is much different and much simpler than core Elgg.
+To declare routes, add a "routes" parameter in your plugin's manifest.json:
 
-#### Basic configuration
-To declare routes, add a routes.php file to your plugin's root that returns a
-map of routes to handlers like so:
+```json
+{
+	"routes": {
+		"/blog" => "blog/index",
+	}
+}
+```
 
-    return array(
-        '/blog' => 'blog/index',
-    );
+It's important that all your routes begin with a slash (`/`) character,
+otherwise they will not be matched. This also makes it obvious which side
+is the url and which side is the handler.
 
-It's important that all your routes begin with a slash (`/`) character, otherwise they will not be matched. This also
-makes it obvious which side is the url and which side is the handler.
-
-On the left side we have the route to look for -- this is compared against the url. If a match is found, we look
-for a handler file in pages/$handler.php, so in this case it would be pages/blog/index.php. These page handlers
-are expected to behave like standard Elgg 1.8 handlers. Plugins are checked for page handlers from last loaded to
-first loaded, so page handlers can now essentially be overridden just like views -- super handy.
+On the left side we have the route to look for -- this is compared against the url.
+If a match is found, we look for a handler file in pages/$handler.php, so in this
+case it would be pages/blog/index.php. These page handlers are expected to behave
+like standard Elgg 1.8 handlers. Plugins are checked for page handlers from last loaded to
+first loaded, so page handlers can now essentially be overridden just like views.
 
 #### Named inputs
 In addition to exact matches, you can define routes that pass named parameters
