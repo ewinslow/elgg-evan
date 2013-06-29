@@ -3,10 +3,10 @@
 elgg_register_admin_menu_item('administer', 'browse', 'users');
 
 // Experimental manifest-based configuration!!
-$manifest = json_decode(file_get_contents(dirname(dirname(__DIR__)) . "/manifest.json"), true);
+$manifest = json_decode(file_get_contents(dirname(dirname(__DIR__)) . "/elgg.json"), true);
 
 if (!$manifest) {
-	throw new Exception("evan/manifest.json was invalid!");
+	throw new Exception("evan/elgg.json was invalid!");
 }
 
 

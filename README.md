@@ -27,10 +27,10 @@ to your plugin's manifest.xml:
 
 ## Features
 
-### manifest.json
+### elgg.json
 
 This framework adds support for declaratively setting up your plugin via a
-manifest.json file.
+elgg.json file.
 
 Instead of using all the registration functions elgg provides, you can just
 create a JSON structure and we'll register it all for you in the right order, etc.
@@ -73,7 +73,7 @@ elgg_register_simplecache_view('page/elements/head');
 elgg_extend_view('page/elements/head', 'evan/html5', 1);
 ```
 
-With my framework, you can just do this in manifest.json:
+With my framework, you can just do this in elgg.json:
 ```json
 {
 	"views": {
@@ -125,7 +125,7 @@ will be forced to `true`, which is often not what you want.
 
 ### Simplified routing system
 
-To declare routes, add a "routes" parameter in your plugin's manifest.json:
+To declare routes, add a "routes" parameter in your plugin's elgg.json:
 
 ```json
 {
