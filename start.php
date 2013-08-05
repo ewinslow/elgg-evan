@@ -2,7 +2,8 @@
 /**
  * 
  */
-
+ 
+ 
 function from_atom($timestamp) {	
 	return date_create_from_format(DateTime::ATOM, $timestamp)->getTimestamp();
 }
@@ -16,7 +17,16 @@ function to_atom($timestamp) {
  */
 global $EVAN;
 
-$EVAN = new stdClass;
+if (!$EVAN) {
+    $EVAN = new stdClass;
+}
+
+$EVAN->mailer = new Evan_Email_ElggSender();
+$EVAN->clock = new Evan_SystemClock();
+$EVAN->db = new Evan_Db_Mysql();
+
+$EVAN->views = new Evan_ViewService();
+$EVAN->i18n = new Evan_I18n();
 
 /**
  * Keeps track of plugins registered with the framework.
@@ -39,35 +49,35 @@ EvanRoute::registerAll();
  * Returns the activitystreams representation of an ElggUser
  */
 function elgg_get_person_proto(ElggUser $user) {
-        $person = array(
-                'guid' => $user->guid,
-                'objectType' => 'person',
-                'displayName' => $user->name,
-                'summary' => $user->briefdescription,
-                'image' => array(
-                        'url' => $user->getIconURL('medium'),
-                        'width' => 100, // TODO: dynamically determine this from config variables
-                        'height' => 100, // TODO: ...and this too, of course
-                ),
-                'url' => $user->getURL(),
-                'location' => array(
-                        'displayName' => $user->location,
-                ),
-                'username' => $user->username,
-        );
-
-        if (elgg_is_admin_logged_in()) {
-                $person['published'] = to_atom($user->time_created);
-                $person['banned'] = $user->isBanned();
-                $person['ban_reason'] = $user->ban_reason;
-                $person['email'] = $user->email;
-
-                if ($user->last_action) {
-                        $person['last_action'] = to_atom($user->last_action);
-                }
-        }
-
-        return $person;
+	$person = array(
+		'guid' => $user->guid,
+		'objectType' => 'person',
+		'displayName' => $user->getDisplayName(),
+		'summary' => $user->briefdescription,
+		'image' => array(
+			'url' => $user->getIconURL('medium'),
+			'width' => 100, // TODO: dynamically determine this from config variables
+			'height' => 100, // TODO: ...and this too, of course
+		),
+		'url' => $user->getURL(),
+		'location' => array(
+			'displayName' => $user->location,
+		),
+		'username' => $user->username,
+	);
+	
+	if (elgg_is_admin_logged_in()) {
+		$person['published'] = to_atom($user->time_created);
+		$person['banned'] = $user->isBanned();
+		$person['ban_reason'] = $user->ban_reason;
+		$person['email'] = $user->email;
+		
+		if ($user->last_action) {
+			$person['last_action'] = to_atom($user->last_action);
+		}
+	}
+	
+	return $person;
 }
 
 function elgg_get_object_proto(ElggObject $object) {
@@ -75,10 +85,10 @@ function elgg_get_object_proto(ElggObject $object) {
 		'guid' => $object->guid,
 		'published' => to_atom($object->time_created),
 		'updated' => to_atom($object->time_updated),
-		"displayName" => $object->title,
+		"displayName" => $object->getDisplayName(),
 		"url" => $object->getURL(),
 		"container" => array(
-			'guid' => $object->getContainerEntity()->guid,
+			'guid' => $object->getContainerGuid(),
 		),
 		"content" => $object->description,
 		'canEdit' => $object->canEdit(),
@@ -103,10 +113,10 @@ function elgg_get_object_proto(ElggObject $object) {
 
 	if ($object->getSubtype() == 'album') {
 		$photosOptions = array(
-                        'container_guid' => $object->guid,
-                        'type' => 'object',
-                        'subtype' => 'image',
-                );
+			'container_guid' => $object->guid,
+			'type' => 'object',
+			'subtype' => 'image',
+		);
 
 		$photos = elgg_get_entities($photosOptions);
 
@@ -173,7 +183,29 @@ function elgg_get_likes_proto(ElggEntity $entity) {
 
 	return $likes_json;
 }
+function elgg_get_attachment_proto(ElggObject $object) {
+	$objectJson = array(
+		'guid' => $object->guid,
+		"displayName" => $object->getDisplayName(),
+		"url" => $object->getURL(),
+		"content" => $object->description,
+	);
 
+	if ($object->getSubtype() == 'image') {
+		$objectJson['image'] = array(
+			'url' => $object->getIconURL('small'),
+			'width' => 100, // TODO: dynamically determine this from config variables
+			'height' => 100, // TODO: ...and this too, of course
+		);
+		$objectJson['fullImage'] = array(
+			'url' => $object->getIconURL('master'),
+			'width' => 550, // TODO: dynamically determine this from config variables
+			'height' => 550, // TODO: ...and this too, of course
+		);
+	}
+
+	return $objectJson;
+}
 function elgg_get_comments_proto(ElggEntity $entity) {
 	$comments = $entity->getAnnotations('generic_comment', 3, 0, 'desc');
 	$comments_json = array(
@@ -200,7 +232,7 @@ function elgg_get_plugin_proto(ElggPlugin $plugin) {
 	$pluginJson = array(
 		'guid' => $plugin->guid,
 		'version' => $plugin->version,
-		'displayName' => $plugin->title,
+		'displayName' => $plugin->getDisplayName(),
 		'elggPluginId' => $plugin->getId(),
 		'isActive' => $plugin->isActive(),
 	);
@@ -311,6 +343,23 @@ function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
 	), $result);
 }
 
+function evan_views_hook_handler($hook, $name, $returnval, $params) {
+	$pieces = explode("/", $name);
+	if ($pieces[0] != 'js') {
+		return $returnval;
+	}
+	
+	array_shift($pieces);
+	$name = implode("/", $pieces);
+	$pathinfo = pathinfo($name);
+	if ($pathinfo['extension'] == 'js') {
+		$filename = $pathinfo['filename'];
+		$dirname = $pathinfo['dirname'];
+		return preg_replace('/^define\(([^\'"])/m', "define(\"$dirname/$filename\", \$1", $returnval, 1);	
+	}
+}
+
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');
 elgg_register_event_handler('all', 'all', 'evan_event_handler');
 elgg_register_plugin_hook_handler('route', 'all', 'evan_routes_hook_handler');
+elgg_register_plugin_hook_handler('view', 'all', 'evan_views_hook_handler');

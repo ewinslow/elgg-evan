@@ -1,4 +1,3 @@
-// <script>
 define(function(require) {
 	return function() {
         return {

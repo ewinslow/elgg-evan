@@ -5,11 +5,7 @@ define(function(require) {
 	var tinyMCE = window.tinyMCE;
 	var tinymce = window.tinymce;
 	
-	var deps = [
-		require('ng/services/elgg').name
-	];
-
-	return angular.module('elggInputHtmlDirective', deps).directive('elggInputHtml', function (elgg) {
+	return function (elgg) {
 		return {
 			require: 'ngModel',
 			link: function (scope, elm, attrs, ngModel) {
@@ -94,6 +90,6 @@ define(function(require) {
 					elm.tinymce(options);
 				});
 			}, // link
-		};
-	}); // angular.module
+		}; // directive definition
+	}; // directive factory
 }); // define

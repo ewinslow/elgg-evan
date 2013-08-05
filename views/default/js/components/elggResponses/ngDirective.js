@@ -1,11 +1,8 @@
 define(function(require) {
-	var angular = require('angular');
-	
-	var deps = [
-		
-	];
-	
-	return angular.module('elggResponsesDirective', deps).directive('elggResponses', function() {
+	/**
+	 * @ngInject
+	 */
+	return function() {
 		return {
 			restrict: 'A',
 			replace: true,
@@ -14,6 +11,7 @@ define(function(require) {
 			},
 			template: require("text!./template.html"),
 			controller: require('./Controller'),
+			controllerAs: 'ctrl'
 		};
-	});
+	};
 });

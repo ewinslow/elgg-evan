@@ -18,6 +18,8 @@ $footer = elgg_view('page/elements/footer', $vars);
 // Set the content type
 header("Content-type: text/html; charset=UTF-8");
 
+$user = elgg_get_logged_in_user_entity();
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,6 +27,9 @@ header("Content-type: text/html; charset=UTF-8");
 	<?php echo elgg_view('page/elements/head', $vars); ?>
 </head>
 <body>
+<script type="application/json" id="evanUser">
+	<?php echo json_encode($user ? elgg_get_person_proto($user) : null); ?>
+</script>
 <div class="elgg-page elgg-page-default">
 	
 	<?php if (elgg_is_logged_in()) { ?>

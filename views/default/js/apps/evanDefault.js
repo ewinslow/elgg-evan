@@ -1,13 +1,22 @@
 // This is what a typical bootstrapper looks like for async angularjs apps.
-define('apps/evanDefault', function(require) {
+define(function(require) {
+	require('angular-sanitize');
+	
 	var angular = require('angular');
 	
 	var ngModule = angular.module('evanDefaultApp', [
-		require('routes/site/activity/ngDeps').name,
-		require('routes/blog/view/ngDeps').name,
-		require('routes/blog/edit/ngDeps').name,
-		require('routes/blog/add/ngDeps').name,
+		'ngSanitize'	
 	]);
+	
+	ngModule.value('elgg', require('elgg'));
+	ngModule.service('evanDatabase', require('evan/Database'));
+	ngModule.service('evanCommentsStorage', require('evan/CommentsStorage'));
+	ngModule.factory('evanUser', require('ng/services/evanUser'));
+	ngModule.filter('calendar', require('ng/filters/calendar'));
+	ngModule.filter('elggEcho', require('ng/filters/elggEcho'));
+	ngModule.filter('fromNow', require('ng/filters/fromNow'));
+	
+	ngModule.directive('elggRiverItem', require('components/elggRiverItem/ngDirective'));
 	
 	ngModule.config(function($locationProvider) {
 		$locationProvider.html5Mode(true);
@@ -64,11 +73,13 @@ define('apps/evanDefault', function(require) {
 			controller: require('routes/photos/owner/Controller'),
 			resolve: require('routes/photos/owner/Controller').$resolve,
 		});
-		$routeProvider.otherwise({
-			redirectTo: function() {
-				window.location.reload(); // Careful of infinite loops!
+		/*$routeProvider.otherwise({
+			resolve: {
+				redirect: function() {
+					window.location.reload(); // Careful of infinite loops!
+				}
 			}
-		});
+		});*/
 	});
 	
 	angular.bootstrap(document, [ngModule.name]);

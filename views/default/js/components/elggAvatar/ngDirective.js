@@ -1,12 +1,5 @@
 define(function(require) {
-
-	var angular = require('angular');
-	
-	var id = 'elggAvatar';
-	var module = id + 'Directive';
-	var deps = [];
-	
-	return angular.module(module, deps).directive(id, function() {
+	return function() {
 		return {
 			restrict: 'E',
 			replace: true,
@@ -20,5 +13,5 @@ define(function(require) {
 				$element.addClass('elgg-avatar-' + size);
 			}
 		};
-	});
+	};
 });

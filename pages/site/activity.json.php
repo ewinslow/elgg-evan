@@ -36,15 +36,23 @@ if (count($activities) != $totalItems) {
 
 foreach ($activities as $activity) {
 	
-	$activity_json = array(
-		'published' => to_atom($activity->posted),
-		'title' => elgg_view('river/elements/summary', array('item' => $activity)),
-		'actor' => elgg_get_person_proto($activity->getSubjectEntity()),
-		'object' => elgg_get_object_proto($activity->getObjectEntity()),
-		'target' => elgg_get_object_proto($activity->getObjectEntity()->getContainerEntity()),
-	);
+	$subject = $activity->getSubjectEntity();
+	$object = $activity->getObjectEntity();
+	if ($object instanceof ElggEntity) {
+		$target = $object->getContainerEntity();
+	}
 	
-	$collection_json['items'][] = $activity_json;
+	if ($subject && $object && $target) {
+		$activity_json = array(
+			'published' => to_atom($activity->posted),
+			'title' => elgg_view('river/elements/summary', array('item' => $activity)),
+			'actor' => elgg_get_person_proto($subject),
+			'object' => elgg_get_object_proto($object),
+			'target' => elgg_get_object_proto($target),
+		);
+		
+		$collection_json['items'][] = $activity_json;
+	}
 }
 
 echo json_encode($collection_json);

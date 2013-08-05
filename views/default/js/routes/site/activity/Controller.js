@@ -1,20 +1,18 @@
 define(function(require) {
 	var newClass = require('evan/newClass');
+	var Collection = require('evan/Collection');
 	
 	var Controller = newClass({
-		constructor: function($scope, river, evanUser) {
-			this.$scope = $scope;
-			this.river = river;
+		'extends': Collection,
+		/**
+		 * @ngInject
+		 */
+		constructor: function($scope, river, $http, evanUser) {
+			Collection.call(this, river, $http);
 
 			$scope.ctrl = this;
-			$scope.target = evanUser;
-		},
-		
-		loadNextItems: function() {
-			this.river.loadNextItems().always(function() {
-				this.$scope.$digest();
-			}.bind(this));
-		},
+			$scope.user = evanUser;
+		}
 	});
 
 	Controller.$resolve = {

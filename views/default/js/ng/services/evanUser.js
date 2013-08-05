@@ -1,5 +1,5 @@
-define(function(require) {
-	var angular = require('angular');
-	var evanUser = JSON.parse(document.getElementById('evanUser').innerHTML);
-	return angular.module('evanUserService', []).value('evanUser', evanUser);
+define(function() {
+	return function($window) {
+		return JSON.parse($window.document.getElementById('evanUser').innerHTML);
+	};
 });

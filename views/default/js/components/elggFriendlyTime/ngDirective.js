@@ -2,14 +2,9 @@ define(function(require) {
 	
 	// require('css!./styles');
 	
-	var angular = require('angular');
 	var moment = require('moment');
 	
-	var id = 'elggFriendlyTime';
-	var module = id + 'Directive';
-	var deps = [];
-	
-	return angular.module(module, deps).directive(id, function() {
+	return function() {
 		return {
 			restrict: 'A',
 			link: function($scope, $element, $attrs) {
@@ -23,5 +18,5 @@ define(function(require) {
 				// TODO(ewinslow): Auto-updates
 			}
 		};
-	});
+	};
 });
