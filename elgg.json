@@ -27,7 +27,7 @@
 		"/blog/view/:guid/:title": "blog/view",
 		
 		"/photos/add/:container_guid": "photos/add",
-		"_/photos/album/:guid/:title": "photos/album",
+		"/photos/album/:guid/:title": "photos/album",
 		"/photos/all": "photos/all",
 		"/photos/image/:guid/:title": "photos/image",
 		"/photos/owner/:alias": "photos/owner",
@@ -59,7 +59,7 @@
 		},
 		"jquery": {
 			"url": "http://jquery.com",
-			"src": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js",
+			"src": "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js",
 			"location": "head"
 		},
 		"jquery-ui": {
@@ -84,7 +84,6 @@
 		"moment": {
 			"url": "http://momentjs.com",
 			"src": "//cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.2/moment.min.js",
-			"deps": [],
 			"exports": "moment"
 		},
 		"text": {

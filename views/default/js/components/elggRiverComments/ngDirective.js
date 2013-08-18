@@ -7,7 +7,7 @@ define(function(require) {
 			template: require("text!./template.html"),
 			controller: require('./Controller'),
 			scope: {
-				comment: '='
+				items: '='
 			}
 		};
 	};

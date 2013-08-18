@@ -1,8 +1,8 @@
 <div class="elgg-image-block elgg-river-item">
-    <a href="{{activity.actor.url}}" class="elgg-image">
-        <img ng-src="{{activity.actor.image.url}}" alt="" width="60" height="60" />                    
-    </a>
-    <div class="elgg-body pas">
+	<div class="elgg-image">
+		<elgg-avatar entity="activity.actor" size="small"></elgg-avatar>
+	</div>
+	<div class="elgg-body pas">
 		<!-- Main content -->
 		<div class="elgg-river-summary">
 			<span ng-bind-html="activity.title"></span>
