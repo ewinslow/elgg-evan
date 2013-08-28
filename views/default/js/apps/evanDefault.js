@@ -1,11 +1,13 @@
 // This is what a typical bootstrapper looks like for async angularjs apps.
 define(function(require) {
-	require('angular-sanitize');
-	
 	var angular = require('angular');
+	require('angular-sanitize');
+	require('angular-route');
+	require('angular-animate');
+	
 	
 	var ngModule = angular.module('evanDefaultApp', [
-		'ngSanitize'	
+		'ngSanitize', 'ngAnimate', 'ngRoute'
 	]);
 	
 	ngModule.value('elgg', require('elgg'));
@@ -29,53 +31,63 @@ define(function(require) {
 	
 	ngModule.config(function($routeProvider) {
 		$routeProvider.when('/activity', {
-			template: require('text!routes/site/activity/template.html'),
+			templateUrl: require.toUrl('routes/site/activity/template.html'),
 			controller: require('routes/site/activity/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/site/activity/Controller').$resolve,
 		});
 		$routeProvider.when('/blog/view/:guid', {
-			template: require('text!routes/blog/view/template.html'),
+			templateUrl: require.toUrl('routes/blog/view/template.html'),
 			controller: require('routes/blog/view/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/blog/view/Controller').$resolve,
 		});
 		$routeProvider.when('/blog/view/:guid/:title', {
-			template: require('text!routes/blog/view/template.html'),
+			templateUrl: require.toUrl('routes/blog/view/template.html'),
 			controller: require('routes/blog/view/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/blog/view/Controller').$resolve,
 		});
 		$routeProvider.when('/blog/add/:container_guid', {
-			template: require('text!routes/blog/add/template.html'),
+			templateUrl: require.toUrl('routes/blog/add/template.html'),
 			controller: require('routes/blog/add/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/blog/add/Controller').$resolve,
 		});
 		$routeProvider.when('/blog/edit/:guid', {
-			template: require('text!routes/blog/edit/template.html'),
+			templateUrl: require.toUrl('routes/blog/edit/template.html'),
 			controller: require('routes/blog/edit/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/blog/edit/Controller').$resolve,
 		});
 		$routeProvider.when("/photos/add/:container_guid", {
-			template: require('text!routes/photos/add/template.html'),
+			templateUrl: require.toUrl('routes/photos/add/template.html'),
 			controller: require('routes/photos/add/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/photos/add/Controller').$resolve,
 		});
 		$routeProvider.when("/photos/album/:guid/:title", {
-			template: require('text!routes/photos/album/template.html'),
+			templateUrl: require.toUrl('routes/photos/album/template.html'),
 			controller: require('routes/photos/album/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/photos/album/Controller').$resolve,
 		});
 		$routeProvider.when('/photos/all', {
-			template: require('text!routes/photos/all/template.html'),
+			templateUrl: require.toUrl('routes/photos/all/template.html'),
 			controller: require('routes/photos/all/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/photos/all/Controller').$resolve,
 		});
 		$routeProvider.when("/photos/image/:guid/:title", {
-			template: require('text!routes/photos/image/template.html'),
+			templateUrl: require.toUrl('routes/photos/image/template.html'),
 			controller: require('routes/photos/image/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/photos/image/Controller').$resolve,
 		});
 		$routeProvider.when("/photos/owner/:alias", {
-			template: require('text!routes/photos/owner/template.html'),
+			templateUrl: require.toUrl('routes/photos/owner/template.html'),
 			controller: require('routes/photos/owner/Controller'),
+			controllerAs: 'ctrl',
 			resolve: require('routes/photos/owner/Controller').$resolve,
 		});
 		/*$routeProvider.otherwise({

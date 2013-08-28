@@ -4,7 +4,7 @@ define(function(require) {
 		return {
 			restrict: 'A',
 			replace: true,
-			template: require("text!./template.html"),
+			template: require.toUrl("./template.html"),
 			controller: require('./Controller'),
 			scope: {
 				items: '='

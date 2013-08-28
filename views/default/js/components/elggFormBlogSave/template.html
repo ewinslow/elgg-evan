@@ -13,7 +13,7 @@
 	
 	<div>
 		<label for="blog_description">Body</label>
-		<textarea elgg-input-html id="blog_description" required name="description" ng-model="blog.content"></textarea>
+		<div elgg-input-html id="blog_description" ng-model="blog.content"></div>
 		<div ng-show="$form.description.$dirty">
 			<span ng-show="$form.description.$error.required">This field is required</span>
 		</div>

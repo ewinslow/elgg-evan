@@ -9,7 +9,7 @@ define(function(require) {
 			scope: {
 				object: '='
 			},
-			template: require("text!./template.html"),
+			templateUrl: require.toUrl("./template.html"),
 			controller: require('./Controller'),
 			controllerAs: 'ctrl'
 		};

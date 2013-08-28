@@ -68,17 +68,27 @@
 		},
 		"angular": {
 			"url": "http://angularjs.org",
-			"src": "//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.5/angular.min.js",
+			"src": "//ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular.min.js",
 			"exports": "angular"
+		},
+		"angular-animate": {
+			"url": "http://angularjs.org",
+			"src": "//ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-animate.min.js",
+			"deps": ["angular"]
+		},
+		"angular-route": {
+			"url": "http://angularjs.org",
+			"src": "//ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js",
+			"deps": ["angular"]
 		},
 		"angular-resource": {
 			"url": "http://angularjs.org",
-			"src": "//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.5/angular-resource.min.js",
+			"src": "//ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-resource.min.js",
 			"deps": ["angular"]
 		},
 		"angular-sanitize": {
 			"url": "http://angularjs.org",
-			"src": "//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular-sanitize.min.js",
+			"src": "//ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-sanitize.min.js",
 			"deps": ["angular"]
 		},
 		"moment": {

@@ -3,7 +3,7 @@ define(function(require) {
 		return {
 			restrict: 'A',
 			replace: true,
-			template: require("text!./template.html"),
+			templateUrl: require.toUrl("./template.html"),
 			controller: require('./Controller'),
 			scope: {
 				'activity': '='

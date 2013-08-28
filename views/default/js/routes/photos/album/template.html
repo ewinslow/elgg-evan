@@ -3,17 +3,17 @@
 		<div class="elgg-head">
 			<ul class="elgg-menu elgg-menu-title elgg-menu-hz elgg-menu-title-default">
 				<li class="elgg-menu-item-upload" ng-show="album.canEdit">
-					<a href="/photos/upload/{{album.guid}}" class="elgg-button elgg-button-submit">
+					<a href="/photos/upload/{{album.guid}}" class="elgg-button elgg-button-submit" target="_self">
 						{{ 'images:upload' | elggEcho }}
 					</a>
 				</li>
 				<li class="elgg-menu-item-edit" ng-show="album.canEdit">
-					<a href="/photos/edit/{{album.guid}}" class="elgg-button elgg-button-action">
+					<a href="/photos/edit/{{album.guid}}" class="elgg-button elgg-button-action" target="_self">
 						{{ 'edit' | elggEcho }}
 					</a>
 				</li>
 				<li class="elgg-menu-item-delete" ng-show="album.canEdit">
-					<a ng-click="deleteEntity(album)">
+					<a ng-click="ctrl.deleteEntity(album)">
 						<span class="elgg-icon elgg-icon-delete">Delete</span>
 					</a>
 				</li>
@@ -33,7 +33,7 @@
 				</li>
 			</ul>
 			<div ng-show="album.totalItems == 0">There are no photos in this album... yet!</div>
-			<div elgg-responses object="album"></div>	
+			<!-- <div elgg-responses object="album"></div> -->	
 		</div>
 	</div>
 </div>

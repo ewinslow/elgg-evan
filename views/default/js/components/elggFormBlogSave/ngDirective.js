@@ -7,7 +7,7 @@ define(function(require) {
 				blog: '=',
 			},
 			controller: require('./Controller'),
-			template: require('text!./template.html'),
+			templateUrl: require.toUrl('./template.html'),
 		};
 	};
 });

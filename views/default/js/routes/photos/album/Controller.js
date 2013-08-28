@@ -8,17 +8,23 @@ define(function(require) {
 		 */
 		constructor: function($scope, album, $window, $location, $rootScope, elgg) {
 			$scope.album = album;
-			
-			$scope.deleteEntity = function(album) {
-				if ($window.confirm('Are you sure?')) {
-					elgg.action('photos/delete', {
-						guid: album.guid,
-					}).success(function(result) {
-						$location.url(result.forward_url.slice(elgg.config.wwwroot.length));
-						$rootScope.$digest();
-					});
-				}
-			};
+			this.elgg = elgg;
+			this.$window = $window;
+			this.$location = $location;
+			this.$rootScope = $rootScope;
+		},
+		
+		deleteEntity: function(album) {
+			if (this.$window.confirm('Are you sure?')) {
+				this.elgg.action('photos/delete', {
+					guid: album.guid,
+				}).success(this.onDeleteSuccess_.bind(this));
+			}
+		},
+		
+		onDeleteSuccess_: function(result) {
+			this.$location.url(result.forward_url.slice(this.elgg.config.wwwroot.length));
+			this.$rootScope.$digest();
 		}
 	});
 	
@@ -27,7 +33,7 @@ define(function(require) {
 		 * @ngInject
 		 */
 		album: function(evanDatabase, $route) {
-			return evanDatabase.getCollection('/album-json', {
+			return evanDatabase.getObject('/album-json', {
 				guid: $route.current.params.guid
 			});
 		}
