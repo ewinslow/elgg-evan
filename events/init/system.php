@@ -18,11 +18,6 @@ foreach (evan_get_plugins() as $plugin) {
 		throw new Exception("$plugin plugin's elgg.json was invalid or unreadable!");
 	}
 	
-	// Register scripts based on manifest
-	foreach ($manifest['scripts'] as $name => $options) {
-		elgg_register_js($name, (array)$options);
-	}
-	
 	// Register view options like extensions, caching, ajax, etc.
 	foreach ($manifest['views'] as $view => $options) {
 		foreach ($options['extensions'] as $extension => $priority) {
@@ -44,11 +39,5 @@ foreach (evan_get_plugins() as $plugin) {
 		if (isset($options['cache']) && $options['cache']) {
 			elgg_register_simplecache_view($view);
 		}
-	}
-	
-	foreach ($manifest['routes'] as $route => $path) {
-		$file = elgg_get_plugins_path() . "evan/pages/$path.php";
-		// echo "$file <br>";
-		EvanRoute::registerOne($route, $file);
 	}
 }
