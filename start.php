@@ -2,8 +2,6 @@
 /**
  * 
  */
- 
- 
 function from_atom($timestamp) {	
 	return date_create_from_format(DateTime::ATOM, $timestamp)->getTimestamp();
 }
@@ -183,6 +181,7 @@ function elgg_get_likes_proto(ElggEntity $entity) {
 
 	return $likes_json;
 }
+
 function elgg_get_attachment_proto(ElggObject $object) {
 	$objectJson = array(
 		'guid' => $object->guid,
@@ -206,6 +205,7 @@ function elgg_get_attachment_proto(ElggObject $object) {
 
 	return $objectJson;
 }
+
 function elgg_get_comments_proto(ElggEntity $entity) {
 	$comments = $entity->getAnnotations('generic_comment', 3, 0, 'desc');
 	$comments_json = array(

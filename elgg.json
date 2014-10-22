@@ -14,43 +14,6 @@
 			}
 		}
 	},
-	"routes": {
-		"/activity": "site/activity",
-	
-		"/forgotpassword": "account/forgotten_password",
-		"/login": "account/login",
-		"/register": "account/register",
-
-		"/blog/add/:container_guid": "blog/add",
-		"/blog/edit/:guid": "blog/edit",
-		"/blog/view/:guid": "blog/view",
-		"/blog/view/:guid/:title": "blog/view",
-		
-		"/photos/add/:container_guid": "photos/add",
-		"/photos/album/:guid/:title": "photos/album",
-		"/photos/all": "photos/all",
-		"/photos/image/:guid/:title": "photos/image",
-		"/photos/owner/:alias": "photos/owner",
-		"/_photos/upload/:guid": "photos/upload",
-		
-		"/activity-json": "site/activity.json",
-		"/admin/plugins-json": "admin/plugins.json",
-		"/albums-json": "albums.json",	
-		"/album-json": "album.json",
-		"/comments-json": "comments.json",
-		"/entity-json": "entity.json",
-		"/image-json": "image.json",
-		"/likes-json": "likes.json",
-		"/posters-json": "site/posters.json",
-		"/users-json": "users.json",
-		"/login2": "user/login2"
-	},
-	"routeHandlers": {
-		"site/activity": {
-			"controller": "Elgg_Site_ActivityController",
-			"app": "evanDefault"
-		}
-	},
 	"scripts": {
 		"require": {
 			"url": "http://requirejs.com",
