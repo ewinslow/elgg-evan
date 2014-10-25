@@ -3,11 +3,6 @@
 This plugin gives me the freedom to experiment with some features that I
 think would be useful in Elgg core.
 
-## Requirements
-
-* PHP 5.3
-* Elgg 1.9-dev
-
 ## Setup
 
 Just install this plugin like any other Elgg plugin. You can declare dependency on this plugin by adding the following
