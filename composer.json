@@ -12,9 +12,19 @@
             "email": "evan.b.winslow@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Evan\\": "src/"
+        }
+    },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": "~5.4",
-        "composer/installers": "~1.0.8"
+        "composer/installers": "~1.0.8",
+        "elgg/elgg": "1.x@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.4"
     }
 }
