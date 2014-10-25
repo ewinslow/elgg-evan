@@ -1,0 +1,20 @@
+{
+    "name": "ewinslow/elgg-evan",
+    "description": "Provides some experimental development conveniences for Elgg",
+    "type": "elgg-plugin",
+    "extra": {
+        "installer-name": "evan"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evan Winslow",
+            "email": "evan.b.winslow@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "~5.4",
+        "composer/installers": "~1.0.8"
+    }
+}
