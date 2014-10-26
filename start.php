@@ -3,30 +3,28 @@
 // For local development
 @include_once __DIR__ . "/vendor/autoload.php";
 
+use DI\ContainerBuilder;
+use ElggEntity as Entity;
+use ElggObject as Object;
+use ElggUser as User;
+use Evan\Http\Route;
+
+
+
 function from_atom($timestamp) {	
 	return date_create_from_format(DateTime::ATOM, $timestamp)->getTimestamp();
 }
 
 function to_atom($timestamp) {
-	return date_format(date_timestamp_set(date_create(), $timestamp), DateTime::ATOM);
+	return date_create()->setTimestamp($timestamp)->format(DateTime::ATOM);
 }
 
 global $EVAN;
 
 if (!$EVAN) {
-	$builder = new DI\ContainerBuilder();
+	$builder = new ContainerBuilder();
 	$builder->addDefinitions(__DIR__ . "/evan.di.php");
     $EVAN = $builder->build();
-}
-
-/**
- * Keeps track of plugins registered with the framework.
- */
-$EVAN->plugins = array();
-
-// Register all active plugins for convention-based plugin hooks + events
-foreach (elgg_get_plugins('active') as $plugin) {
-	$EVAN->plugins[] = $plugin->getID();
 }
 
 function evan_get_plugins() {
@@ -34,12 +32,12 @@ function evan_get_plugins() {
 	return $EVAN->plugins;
 }
 
-Evan\Http\Route::registerAll();
+Route::registerAll();
 
 /**
  * Returns the activitystreams representation of an ElggUser
  */
-function elgg_get_person_proto(ElggUser $user) {
+function elgg_get_person_proto(User $user) {
 	$person = array(
 		'guid' => $user->guid,
 		'objectType' => 'person',
@@ -71,7 +69,7 @@ function elgg_get_person_proto(ElggUser $user) {
 	return $person;
 }
 
-function elgg_get_object_proto(ElggObject $object) {
+function elgg_get_object_proto(Object $object) {
 	$objectJson = array(
 		'guid' => $object->guid,
 		'published' => to_atom($object->time_created),
@@ -155,7 +153,7 @@ function elgg_get_object_proto(ElggObject $object) {
 	return $objectJson;
 }
 
-function elgg_get_likes_proto(ElggEntity $entity) {
+function elgg_get_likes_proto(Entity $entity) {
 	$likes = $entity->getAnnotations('likes', 3);
 	$likes_count = elgg_get_annotations(array(
 		'annotation_name' => 'likes', 
@@ -175,7 +173,7 @@ function elgg_get_likes_proto(ElggEntity $entity) {
 	return $likes_json;
 }
 
-function elgg_get_attachment_proto(ElggObject $object) {
+function elgg_get_attachment_proto(Object $object) {
 	$objectJson = array(
 		'guid' => $object->guid,
 		"displayName" => $object->getDisplayName(),
@@ -199,7 +197,7 @@ function elgg_get_attachment_proto(ElggObject $object) {
 	return $objectJson;
 }
 
-function elgg_get_comments_proto(ElggEntity $entity) {
+function elgg_get_comments_proto(Entity $entity) {
 	$comments = $entity->getAnnotations('generic_comment', 3, 0, 'desc');
 	$comments_json = array(
 		'totalItems' => $entity->countComments(),
@@ -247,14 +245,14 @@ function elgg_get_plugin_proto(ElggPlugin $plugin) {
  *
  * https://github.com/Elgg/Elgg/blob/f122c12ab35f26d5b77a18cc263fc199eb2a7b01/mod/blog/views/default/object/blog.php
  *
- * @param string     $view     The subview to use to visualize this this entity.
- * @param ElggEntity $entity   The entity to visualize.
- * @param array      $vars     Extra variables to pass to the view.
- * @param string     $viewtype Set this to force the viewtype.
+ * @param string $view     The subview to use to visualize this this entity.
+ * @param Entity $entity   The entity to visualize.
+ * @param array  $vars     Extra variables to pass to the view.
+ * @param string $viewtype Set this to force the viewtype.
  *
  * @return string The generated view.
  */
-function evan_view_entity($view, ElggEntity $entity, array $vars = array(), $viewtype = 'default') {
+function evan_view_entity($view, Entity $entity, array $vars = array(), $viewtype = 'default') {
 	$type = $entity->getType();
 	$subtype = $entity->getSubtype();
 	
@@ -308,10 +306,10 @@ function evan_routes_hook_handler($hook, $handler, $params) {
 	if (is_array($params['segments'])) {
 		$segments = array_merge($segments, $params['segments']);
 	}
-	return Evan\Http\Route::route('/' . implode($segments, '/'));
+	return Route::route('/' . implode($segments, '/'));
 }
 
-function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
+function evan_user_can($verb, Entity $object, Entity $target = NULL) {
 	switch ($verb) {
 		case 'post':
 			if (!$target) {
