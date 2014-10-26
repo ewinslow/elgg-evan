@@ -1,5 +1,7 @@
 <?php
 
+use Evan\Structs\ArrayCollection;
+
 return array(
 	// TODO(ewinslow): Use classname resolution when we can require PHP 5.5
 	'Evan\Email\Sender' => DI\object('Evan\Email\ElggSender'),
@@ -7,13 +9,7 @@ return array(
 	'Evan\Storage\Db' => DI\object('Evan\Storage\MysqlDb'),
 	'Evan\Time\Clock' => DI\object('Evan\Time\SystemClock'),
 	'plugins' => DI\factory(function() {
-		$plugins = array();
-		
 		// Register all active plugins for convention-based plugin hooks + events
-		foreach (elgg_get_plugins('active') as $plugin) {
-			$plugins[] = $plugin->getID();
-		}
-		
-		return $plugins;
+		return new ArrayCollection(elgg_get_plugins('active'));
 	}),
 );
