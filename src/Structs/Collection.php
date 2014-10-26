@@ -27,6 +27,16 @@ use Iterator;
  *  * Use composition -- http://en.wikipedia.org/wiki/Composition_over_inheritance
  */
 interface Collection extends Countable, Iterator {
+	
+	/**
+	 * Returns a new collection only containing the elements which pass the filter.
+	 * 
+	 * @param callable $filter Receives an item. Return true to keep the item.
+	 * 
+	 * @return Collection
+	 */
+	public function filter(callable $filter);
+	
 	/**
 	 * Returns true iff the item is in this collection at least once.
 	 * 

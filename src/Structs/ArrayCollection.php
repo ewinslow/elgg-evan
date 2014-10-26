@@ -28,6 +28,19 @@ final class ArrayCollection implements Collection {
 	}
 	
 	/** @override */
+	public function filter(callable $filter) {
+		$results = array();
+		
+		foreach ($this->items as $item) {
+			if ($filter($item)) {
+				$results[] = $item;
+			}
+		}
+		
+		return new ArrayCollection($results);
+	}
+	
+	/** @override */
 	public function has($item) {
 		return in_array($item, $this->items, true);
 	}
@@ -40,7 +53,7 @@ final class ArrayCollection implements Collection {
 	/** @override */
 	public function map(callable $mapper) {
 		$results = array();
-		foreach ($items as $item) {
+		foreach ($this->items as $item) {
 			$results[] = $mapper($item);
 		}
 		return new ArrayCollection($results);
