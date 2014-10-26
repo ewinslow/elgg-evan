@@ -1,6 +1,10 @@
 <?php
 
-$menu = new EvanMenu($return);
+use Evan\Menu;
+
+global $EVAN;
+
+$menu = new Menu($return);
 $target = $params['target'];
 
 if (class_exists('ElggWire')) {
