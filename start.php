@@ -1,7 +1,8 @@
 <?php
-/**
- * 
- */
+
+// For local development
+@include_once __DIR__ . "/vendor/autoload.php";
+
 function from_atom($timestamp) {	
 	return date_create_from_format(DateTime::ATOM, $timestamp)->getTimestamp();
 }
@@ -10,21 +11,13 @@ function to_atom($timestamp) {
 	return date_format(date_timestamp_set(date_create(), $timestamp), DateTime::ATOM);
 }
 
-/**
- *
- */
 global $EVAN;
 
 if (!$EVAN) {
-    $EVAN = new stdClass;
+	$builder = new DI\ContainerBuilder();
+	$builder->addDefinitions(__DIR__ . "/evan.di.php");
+    $EVAN = $builder->build();
 }
-
-$EVAN->mailer = new Evan_Email_ElggSender();
-$EVAN->clock = new Evan_SystemClock();
-$EVAN->db = new Evan_Db_Mysql();
-
-$EVAN->views = new Evan_ViewService();
-$EVAN->i18n = new Evan_I18n();
 
 /**
  * Keeps track of plugins registered with the framework.
@@ -41,7 +34,7 @@ function evan_get_plugins() {
 	return $EVAN->plugins;
 }
 
-EvanRoute::registerAll();
+Evan\Http\Route::registerAll();
 
 /**
  * Returns the activitystreams representation of an ElggUser
@@ -315,7 +308,7 @@ function evan_routes_hook_handler($hook, $handler, $params) {
 	if (is_array($params['segments'])) {
 		$segments = array_merge($segments, $params['segments']);
 	}
-	return EvanRoute::route('/' . implode($segments, '/'));
+	return Evan\Http\Route::route('/' . implode($segments, '/'));
 }
 
 function evan_user_can($verb, ElggEntity $object, ElggEntity $target = NULL) {
