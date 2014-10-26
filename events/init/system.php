@@ -1,22 +1,24 @@
 <?php
+use ElggPlugin as Plugin;
 
 elgg_register_admin_menu_item('administer', 'browse', 'users');
 
-
-foreach (evan_get_plugins() as $plugin) {
-	$mod = dirname(dirname(dirname(__DIR__)));
-	
-	$filepath = "$mod/$plugin/elgg.json";
-	if (!file_exists($filepath)) {
-		continue;
-	}
-	
+$manifests = evan_get_plugins()->map(function(Plugin $plugin) {
+	return $plugin->getPath() . "elgg.json";
+})->filter(function($file) {
+	return file_exists($file);
+})->map(function($filepath) {
 	// Experimental manifest-based configuration!!
 	$manifest = json_decode(file_get_contents($filepath), true);
 	
 	if (!$manifest) {
 		throw new Exception("$plugin plugin's elgg.json was invalid or unreadable!");
 	}
+
+	return $manifest;	
+});
+
+foreach ($manifests as $manifest) {
 	
 	// Register view options like extensions, caching, ajax, etc.
 	foreach ($manifest['views'] as $view => $options) {

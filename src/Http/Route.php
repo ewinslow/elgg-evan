@@ -1,6 +1,8 @@
 <?php
 namespace Evan\Http;
 
+use ElggPlugin as Plugin;
+
 /**
  * Class to encapsulate all the routing-related functions.
  * @author Evan
@@ -10,11 +12,14 @@ class Route {
 	private static $routes = array();
 
 	public static function registerAll() {
-		foreach (\evan_get_plugins() as $plugin) {
-			$file = \elgg_get_plugins_path() . "$plugin/routes.php";
-			if (\file_exists($file)) {
-				self::register(require_once $file);
-			}
+		$files = \evan_get_plugins()->map(function(Plugin $plugin) {
+			return $plugin->getPath() . "routes.php";
+		})->filter(function($file) {
+			return file_exists($file);
+		});
+		
+		foreach ($files as $file) {
+			self::register(require_once $file);
 		}
 	}
 	

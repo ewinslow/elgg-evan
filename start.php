@@ -6,6 +6,7 @@
 use DI\ContainerBuilder;
 use ElggEntity as Entity;
 use ElggObject as Object;
+use ElggPlugin as Plugin;
 use ElggUser as User;
 use Evan\Http\Route;
 
@@ -29,7 +30,7 @@ if (!$EVAN) {
 
 function evan_get_plugins() {
 	global $EVAN;
-	return $EVAN->plugins;
+	return $EVAN->get('plugins');
 }
 
 Route::registerAll();
@@ -219,7 +220,7 @@ function elgg_get_comment_proto($comment) {
 	);
 }
 
-function elgg_get_plugin_proto(ElggPlugin $plugin) {
+function elgg_get_plugin_proto(Plugin $plugin) {
 	$pluginJson = array(
 		'guid' => $plugin->guid,
 		'version' => $plugin->version,
@@ -272,13 +273,16 @@ function evan_view_entity($view, Entity $entity, array $vars = array(), $viewtyp
  * This function makes it possible to register for hooks using directory structure conventions.
  */
 function evan_plugin_hook_handler($hook, $type, $return, $params) {
-	foreach (evan_get_plugins() as $plugin) {
-		$file = elgg_get_plugins_path() . "$plugin/hooks/" . str_replace(':', '/', "$hook/$type.php");
-		if (file_exists($file)) {
-			$result = include $file;
-			if (isset($result)) {
-				$return = $result;
-			}
+	$hook_paths = evan_get_plugins()->map(function(Plugin $plugin) use ($hook, $type) {
+		return $plugin->getPath() . "hooks/" . str_replace(':', '/', "$hook/$type.php");
+	})->filter(function($file) {
+		return file_exists($file);
+	});
+
+	foreach($hook_paths as $file) {
+		$result = include $file;
+		if (isset($result)) {
+			$return = $result;
 		}
 	}
 	
@@ -290,13 +294,16 @@ function evan_plugin_hook_handler($hook, $type, $return, $params) {
  * This function makes it possible to register for events using directory structure conventions.
  */
 function evan_event_handler($event, $type, $object) {
-	foreach (evan_get_plugins() as $plugin) {
-		$file = elgg_get_plugins_path() . "$plugin/events/" . str_replace(':', '/', "$event/$type.php");
-		if (file_exists($file)) {
-			$result = include $file;
-			if ($result === false) {
-				return false;
-			}
+	$files = evan_get_plugins()->map(function(Plugin $plugin) use ($event, $type) {
+		return $plugin->getPath() . "events/" . str_replace(':', '/', "$event/$type.php");
+	})->filter(function($file) {
+		return file_exists($file);
+	});
+	
+	foreach ($files as $file) {
+		$result = include $file;
+		if ($result === false) {
+			return false;
 		}
 	}
 }
