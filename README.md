@@ -5,83 +5,24 @@ think would be useful in Elgg core.
 
 ## Setup
 
-Just install this plugin like any other Elgg plugin. You can declare dependency on this plugin by adding the following
-to your plugin's manifest.xml:
+You need to use composer to install this plugin. Use this command at the root
+of your Elgg installation.
 
-	<requires>
-		<type>plugin</type>
-		<name>evan</name>
-		<version>2.0-dev</version>
-	</requires>
-	<requires>
-		<type>priority</type>
-		<plugin>evan</plugin>
-		<priority>after</priority>
-	</requires>
+```
+composer require ewinslow/elgg-evan
+```
 
+You also need to have Elgg 1.10-dev installed.
+
+If still on 1.9-, you can manually edit one of the core libs and call:
+
+```php
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+```
+
+This will ensure that all the classes and dependencies can be autoloaded.
 
 ## Features
-
-### elgg.json
-
-This framework adds support for declaratively setting up your plugin via a
-elgg.json file.
-
-Instead of using all the registration functions elgg provides, you can just
-create a JSON structure and we'll register it all for you in the right order, etc.
-
-#### `elgg_register_js` => "scripts"
-
-```json
-{
-	"scripts": {
-		"foo": {
-			"url": "http://foojs.org/"
-			"src": "//cdnjs.cloudflare.com/ajax/libs/foo.js/x.y.z/foo-min.js",
-			"deps": ["bar"],
-			"exports": "foo",
-			"location": "footer"
-		}
-	}
-}
-```
-
-#### `elgg_register_css` => "styles"
-
-```json
-{
-	"styles": {
-		"normalize": {
-			"url": "http://necolas.github.io/normalize.css/",
-			"href": "//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.0/normalize.css"
-		}
-	}
-}
-```
-
-#### `elgg_extend_view`, `elgg_register_simplecache_view`, `elgg_register_ajax_view` => "views"
-
-Traditionally you do this in your init,system hook handler:
-```php
-elgg_register_ajax_view('page/elements/head');
-elgg_register_simplecache_view('page/elements/head');
-elgg_extend_view('page/elements/head', 'evan/html5', 1);
-```
-
-With my framework, you can just do this in elgg.json:
-```json
-{
-	"views": {
-		"page/elements/head": {
-			"ajax": true,
-			"cache": true,
-			"extensions": {
-				"evan/html5": 1
-			}
-		}
-	}
-}
-```
 
 ### Viewing entities with `evan_view_entity()`
 
@@ -95,64 +36,6 @@ For example, `evan_view_entity('link', $blog)` will look for views in the follow
 
 This allows you to avoid filling your views with so many if/else statements like this:
 https://github.com/Elgg/Elgg/blob/f122c12ab35f26d5b77a18cc263fc199eb2a7b01/mod/blog/views/default/object/blog.php
-
-### Convention-based hook + event registration
-
-This plugin makes it possible to register for hooks using directory structure conventions rather than explicit
-function registration. In order to register for the `"register", "menu:site"` hook, put a file at
-`my_plugin/hooks/register/menu/site.php`.
-
-A similar feature is also available for events. In order to register for the `"init", "system"` event, for example,
-put the behavior of the event at `my_plugin/events/init/system.php`. Return `false` from the file in order to cancel
-further events, just like normal event handler functions.
-
-#### Limitations
-It is not possible to register for all types of a certain hook with this method. I.e., a file at
-`my_plugin/hooks/register/all.php` will not be run on all 'register' hooks.
-
-There is no way to unregister hooks when using this method. Best you can do is add a hook that undoes the
-the effect of the hook you want to "unregister" and make sure the plugin that defines this hook is loaded later.
-
-#### Warning!!!
-You MUST include an explicit return value in hook handlers in order to avoid clobbering the results. If you don't want
-to change the return value, `return $return` will work, as will `return NULL`. If you fail to do this, the return value
-will be forced to `true`, which is often not what you want.
-
-### Simplified routing system
-
-To declare routes, add a "routes" parameter in your plugin's elgg.json:
-
-```json
-{
-	"routes": {
-		"/blog" => "blog/index",
-	}
-}
-```
-
-It's important that all your routes begin with a slash (`/`) character,
-otherwise they will not be matched. This also makes it obvious which side
-is the url and which side is the handler.
-
-On the left side we have the route to look for -- this is compared against the url.
-If a match is found, we look for a handler file in pages/$handler.php, so in this
-case it would be pages/blog/index.php. These page handlers are expected to behave
-like standard Elgg 1.8 handlers. Plugins are checked for page handlers from last loaded to
-first loaded, so page handlers can now essentially be overridden just like views.
-
-#### Named inputs
-In addition to exact matches, you can define routes that pass named parameters
-as input to the handlers.
-
-    return array(
-        '/blog/:guid' => 'blog/view',
-    )
-
-This will pass the input "guid" to the "blog/view" handler. You can use arbitrary names after the colon to define
-inputs (e.g., :my_cool_input), but the framework recognizes some as special:
-
- * `guid` and anything that ends in `_guid` will only match integers.
- * More to come... any suggestions?
 
 ### CSS-based icon insertion
 
@@ -263,10 +146,6 @@ like so:
 
     elgg_register_plugin_hook_handler('permission', 'post', 'handler');
 
-Or if you prefer the file-system-based method that the evan-framework provides:
-
-    /mod/myplugin/hooks/permission/post.php
-
 Your handler will be passed four values: actor, verb, object, and target.
 Plugin developers are encouraged to use the [activitystreams verbs][as-verbs]
 whenever one is available that fits their needs.
@@ -283,7 +162,7 @@ submit a bug/pull request and we'll get that fixed.
 #### Limitations
 
 This function does not accept non-entities as the object or target of the
-permissions check. For example, as of 1.8, you cannot ask using this function
+permissions check. For example, until Elgg 1.9, you could not ask using this function
 whether the user has permission to comment on a blog, since comments are modeled
 as annotations. The appropriate way to do that would have been:
 
@@ -299,28 +178,28 @@ this new permissions interface will help clarify for people what should be an
 ElggEntity and what should be an ElggAnnotation so that we don't have this
 situation again in the future.
 
-### EvanDatabase
+### Evan\Storage\MysqlDb
 
-This factory class provides some useful tools for querying entities. For example,
+This class provides some useful tools for querying entities. For example,
 to fetch 10 banned users:
 
-    $db = new EvanDatabase();
+    $db = new Evan\Storage\MysqlDb();
     $db->getUsers()->where('banned', true)->getItems(10, 0); // The array of users
 
 To count the number of banned users:
 
-    $db = new EvanDatabase();
+    $db = new Evan\Storage\MysqlDb();
     $db->getUsers()->where('banned', true)->getCount(); // The number of banned users
 
 The power comes from having a dedicated EvanUsersQuery object that understands
 user-specific fields. For example, we can now easily query for admins:
 
-    $db = new EvanDatabase();
+    $db = new Evan\Storage\MysqlDb();
     $db->getUsers()->where('admin', true)->getItem(0); // A single admin user
 
 It also makes some very handy admin-relevant queries easy:
 
-    $db = new EvanDatabase();
+    $db = new Evan\Storage\MysqlDb();
     $db->getUsers()->where('validated', false)->getItems(); // 10 unvalidated users
 
 #### Limitations
