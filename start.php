@@ -8,7 +8,6 @@ use ElggEntity as Entity;
 use ElggObject as Object;
 use ElggPlugin as Plugin;
 use ElggUser as User;
-use Evan\Http\Route;
 
 
 
@@ -32,8 +31,6 @@ function evan_get_plugins() {
 	global $EVAN;
 	return $EVAN->get('plugins');
 }
-
-Route::registerAll();
 
 /**
  * Returns the activitystreams representation of an ElggUser
@@ -308,14 +305,6 @@ function evan_event_handler($event, $type, $object) {
 	}
 }
 
-function evan_routes_hook_handler($hook, $handler, $params) {
-	$segments = array($handler);
-	if (is_array($params['segments'])) {
-		$segments = array_merge($segments, $params['segments']);
-	}
-	return Route::route('/' . implode($segments, '/'));
-}
-
 function evan_user_can($verb, Entity $object, Entity $target = NULL) {
 	switch ($verb) {
 		case 'post':
@@ -341,23 +330,5 @@ function evan_user_can($verb, Entity $object, Entity $target = NULL) {
 	), $result);
 }
 
-function evan_views_hook_handler($hook, $name, $returnval, $params) {
-	$pieces = explode("/", $name);
-	if ($pieces[0] != 'js') {
-		return $returnval;
-	}
-	
-	array_shift($pieces);
-	$name = implode("/", $pieces);
-	$pathinfo = pathinfo($name);
-	if ($pathinfo['extension'] == 'js') {
-		$filename = $pathinfo['filename'];
-		$dirname = $pathinfo['dirname'];
-		return preg_replace('/^define\(([^\'"])/m', "define(\"$dirname/$filename\", \$1", $returnval, 1);	
-	}
-}
-
 elgg_register_plugin_hook_handler('all', 'all', 'evan_plugin_hook_handler');
 elgg_register_event_handler('all', 'all', 'evan_event_handler');
-elgg_register_plugin_hook_handler('route', 'all', 'evan_routes_hook_handler');
-elgg_register_plugin_hook_handler('view', 'all', 'evan_views_hook_handler');

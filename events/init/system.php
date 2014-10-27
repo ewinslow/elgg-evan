@@ -15,7 +15,7 @@ $manifests = evan_get_plugins()->map(function(Plugin $plugin) {
 		throw new Exception("$plugin plugin's elgg.json was invalid or unreadable!");
 	}
 
-	return $manifest;	
+	return $manifest;
 });
 
 foreach ($manifests as $manifest) {
