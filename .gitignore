@@ -1,6 +1,7 @@
 .*
 /vendor/
 composer.lock
+/mod/
 
 !.travis.yml
 !.gitignore
