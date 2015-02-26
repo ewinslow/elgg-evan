@@ -10,7 +10,7 @@ class MysqlDb implements Db {
 	}
     
     public function addMetastring($metastring) {
-        return \add_metastring($metastring);
+        return \elgg_get_metastring_id($metastring);
     }
 
     /** @override */
