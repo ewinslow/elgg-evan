@@ -75,14 +75,8 @@ class UsersQuery extends EntitiesQuery {
 		 * "where the entity has metadata set OR it's not equal to 1".
 		 */
 		if ($this->validated === false) {
-			$validated_id = \get_metastring_id('validated');
-			if ($validated_id === false) {
-				$validated_id = \add_metastring('validated');
-			}
-			$one_id = \get_metastring_id('1');
-			if ($one_id === false) {
-				$one_id = \add_metastring('1');
-			}
+			$validated_id = \elgg_get_metastring_id('validated');
+			$one_id = \elgg_get_metastring_id('1');
 		
 			$options['wheres'][] = "NOT EXISTS (
 				SELECT 1 FROM {$this->getDB()->getPrefix()}metadata validated_md
